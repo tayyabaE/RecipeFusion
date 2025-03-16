@@ -99,7 +99,6 @@
   font-size: 1rem;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .search-input,
   .filter-dropdown {
