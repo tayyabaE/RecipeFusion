@@ -50,38 +50,38 @@ function Layout() {
     location.pathname === "/searchpage" ||
     location.pathname === "/userprofile";
 
-  const sidebarWidth = showSidebar || showUserSidebar
-    ? isSmallScreen ? "60px" : "230px"
-    : "0";
+  const sidebarWidth =
+    showSidebar || showUserSidebar ? (isSmallScreen ? "60px" : "230px") : "0";
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {showSidebar && <Sidebar />}
       {showUserSidebar && <UserSidebar />}
       <div
-  style={{
-    marginLeft: sidebarWidth,
-    width: `calc(100% - ${sidebarWidth})`,
-    transition: "margin-left 0.3s ease-in-out",
-    boxSizing: "border-box",
-    overflowX: "hidden",
-    maxWidth: "100vw", 
-  }}
->
-
+        style={{
+          marginLeft: sidebarWidth,
+          width: `calc(100% - ${sidebarWidth})`,
+          transition: "margin-left 0.3s ease-in-out",
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          maxWidth: "100vw",
+        }}
+      >
         <Routes>
-          <Route path="/" style={{marginRight:'0px'}} element={<LandingPage />} />
+          <Route
+            path="/"
+            style={{ marginRight: "0px" }}
+            element={<LandingPage />}
+          />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="*" element={<LandingPage />} />
 
-          {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/users" element={<UserTable />} />
           <Route path="/recipes" element={<RecipeTable />} />
           <Route path="/reviews" element={<ReviewsTable />} />
 
-          {/* User Routes */}
           <Route path="/userhome" element={<UserDashboard />} />
           <Route path="/dashboard/user" element={<UserDashboard />} />
           <Route path="/searchrecipe" element={<SearchRecipe />} />
@@ -91,7 +91,6 @@ function Layout() {
           <Route path="/searchpage" element={<SearchPage />} />
           <Route path="/userprofile" element={<UserProfile />} />
 
-          {/* Authentication */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>

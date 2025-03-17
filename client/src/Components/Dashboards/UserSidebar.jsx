@@ -39,8 +39,8 @@ function UserSidebar() {
             <Icons.FaUserLarge className="icons-colored" /> Profile
           </li>
           <li 
-            className={location.pathname === "/landing" ? "active" : ""}
-            onClick={() => navigate("/landing")}
+            className={location.pathname === "/" ? "active" : ""}
+            onClick={() => navigate("/")}
           >
             <Icons.FaArrowRightFromBracket className="icons-colored" /> Logout
           </li>
@@ -77,8 +77,8 @@ function UserSidebar() {
             <Icons.FaUserLarge className="icons-colored" />
           </li>
           <li 
-            className={location.pathname === "/landing" ? "active" : ""}
-            onClick={() => navigate("/landing")}
+            className={location.pathname === "/" ? "active" : ""}
+            onClick={() => navigate("/")}
           >
             <Icons.FaArrowRightFromBracket className="icons-colored" />
           </li>
