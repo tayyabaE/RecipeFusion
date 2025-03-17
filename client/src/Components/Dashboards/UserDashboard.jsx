@@ -12,13 +12,12 @@ const UserDashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Welcome Message */}
+
       <div className="welcome-section">
         <h2>WELCOME BACK, {user.name}!</h2>
         <p>Your last login: {user.lastLogin}</p>
       </div>
 
-      {/* Stats Cards */}
       <div className="stats-container">
         <div className="stat-card">
           <h3>{user.savedRecipes}</h3>
@@ -31,7 +30,6 @@ const UserDashboard = () => {
         
       </div>
 
-      {/* Recent Activity */}
       <div className="recent-activity">
         <h3>Recent Activity</h3>
         <ul>

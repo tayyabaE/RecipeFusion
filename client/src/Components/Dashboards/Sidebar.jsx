@@ -9,7 +9,6 @@ function Sidebar() {
 
   return (
     <>
-      {/* Sidebar for Large Screens */}
       <div className="admin-sidebar large-screen">
         <div className="logo">
           <h3 className="nav-heading">Recipe <span>Fusion</span></h3>
@@ -48,7 +47,6 @@ function Sidebar() {
         </ul>
       </div>
 
-      {/* Sidebar for Small Screens */}
       <div className="admin-sidebar small-screen">
       <div className="logo">
           <h3 className="nav-heading" style={{fontSize:'16px', color:'#fff', letterSpacing:0, marginBottom:'10px'}}>Recipe Fusion</h3>

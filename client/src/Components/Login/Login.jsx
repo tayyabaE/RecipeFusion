@@ -5,12 +5,11 @@ import { FaEnvelope, FaLock, FaUser } from "react-icons/fa"; // Import icons
 import { useNavigate } from "react-router-dom"; // Navigation for redirection
 
 const Login = () => {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Handle Login
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -22,11 +21,6 @@ const Login = () => {
     else if (username === "user" && password === "user123") {
       navigate("/userhome");
     }
-    // Normal Login (Requires Email or Username)
-    else if ((email || username) && password) {
-      alert("Login successful! Redirecting...");
-      navigate("/home");
-    } 
     else {
       alert("Invalid credentials! Please try again.");
     }
@@ -34,7 +28,7 @@ const Login = () => {
 
   return (
     <div id="logsign" className="login-signup-container">
-      {/* Navbar/Header */}
+      
       <header className="navbar">
         <h1 className="nav-heading"><span>Recipe</span>Fusion</h1>
         <div className="nav-buttons">
@@ -48,7 +42,6 @@ const Login = () => {
         <div className="leftSection">
           <h2 className="section-title">Welcome Back</h2>
           <form onSubmit={handleLogin}>
-            {/* Username Field */}
             <div className="input-container">
               <FaUser className="icons-colored" />
               <input
@@ -59,7 +52,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Email Field */}
             <div className="input-container">
               <FaEnvelope className="icons-colored" />
               <input
@@ -72,7 +64,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Password Field */}
             <div className="input-container">
               <FaLock className="icons-colored" />
               <input
@@ -84,7 +75,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Login Button */}
             <button type="submit" className="btn-login">
               Login
             </button>
@@ -95,7 +85,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Left Section */}
         <div className="rightSection">
           <div className="logo-container">
             <h1 className="section-title">Recipe Fusion</h1>

@@ -17,12 +17,11 @@
   color: var(--primary-color);
 }
 
-/* Cards Container */
 .cards-container {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  flex-wrap: wrap; 
 }
 
 .card {
@@ -32,7 +31,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(191, 76, 13, 0.9);
   text-align: center;
-  min-width: 150px; /* Prevents cards from shrinking too much */
+  min-width: 150px;
 }
 
 .card-heading, .count {
@@ -58,7 +57,6 @@
   justify-content: center;
 }
 
-/* Dashboard Layout */
 .dashboard-content {
   display: flex;
   gap: 10px;
@@ -66,14 +64,12 @@
   flex-wrap: wrap;
 }
 
-/* Charts */
 .chart-container,
 .barchart {
   flex: 1;
   max-width: 50%;
 }
 
-/* Reviews Chart */
 .barchart {
   width: 500px;
   transition: all 0.3s ease-in-out;
@@ -101,7 +97,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 10px;
-  flex-wrap: wrap; /* Enables wrapping on small screens */
+  flex-wrap: wrap; 
 }
 
 .barchart {
@@ -135,9 +131,6 @@
   color: var(--primary-color);
 }
 
-/* Responsive Design */
-
-/* Tablets (max-width: 1024px) */
 @media screen and (max-width: 1024px) {
   .cards-container {
     flex-direction: row;
@@ -161,7 +154,6 @@
   }
 }
 
-/* Mobile (max-width: 768px) */
 @media screen and (max-width: 768px) {
   .cards-container {
     flex-direction: column;

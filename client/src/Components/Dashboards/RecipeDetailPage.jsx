@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import "./RecipeDetails.css";
+import "./DataTable.css";
 import Swal from "sweetalert2";
 
 const RecipeDetails = () => {
@@ -9,11 +9,8 @@ const RecipeDetails = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [recipeCard, setRecipeCard] = useState(null);
-  const [cardLoading, setCardLoading] = useState(false);
   const [shoppingList, setShoppingList] = useState([]);
   
-  const API_KEY = "aa71d33666424690b40a6457992f6657";
 
   useEffect(() => {
     const fetchRecipeDetails = async () => {
@@ -21,7 +18,7 @@ const RecipeDetails = () => {
       setError("");
       try {
         const response = await axios.get(
-          `https://api.spoonacular.com/recipes/${id}/information?apiKey=${API_KEY}`
+          `https://api.spoonacular.com/recipes/${id}/information?apiKey=${import.meta.env.VITE_FOOD_API}`
         );
         setRecipe(response.data);
       } catch (error) {
