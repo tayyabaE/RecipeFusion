@@ -65,7 +65,7 @@
     text-decoration: underline;
   }
   
-  
+
   .rightSection {
     flex: 1;
     display: flex;
@@ -93,6 +93,9 @@
     .auth-container {
       flex-direction: column;
       text-align: center;
+      .btn-login{
+        display: block;
+      }
     }
   
     .rightSection {

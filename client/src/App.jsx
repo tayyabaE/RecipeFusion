@@ -70,7 +70,7 @@ function Layout() {
 >
 
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" style={{marginRight:'0px'}} element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="*" element={<LandingPage />} />
 

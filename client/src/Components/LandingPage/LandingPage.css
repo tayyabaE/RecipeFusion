@@ -161,6 +161,7 @@
     justify-content: center;
     position: relative;
     text-align: center; 
+    margin-right: 0;
 }
 
 .heroPageContainer:before {
