@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import "./UserDashboard.css"
-
+import Sidebar from "./UserSidebar";
 const SaveRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
 
@@ -17,6 +16,8 @@ const SaveRecipes = () => {
   };
 
   return (
+    <div style={{ minHeight: "100vh" }}>
+          <Sidebar />
     <div className="saved-recipes-container">
       <h2>Saved Recipes</h2>
       {savedRecipes.length === 0 ? (
@@ -34,6 +35,7 @@ const SaveRecipes = () => {
           ))}
         </ul>
       )}
+    </div>
     </div>
   );
 };

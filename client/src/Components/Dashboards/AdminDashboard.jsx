@@ -2,6 +2,7 @@ import React,{useState} from "react";
 import "./AdminDashboard.css";
 import * as Icons from "react-icons/fa6";
 import Chart from "react-apexcharts";
+import Sidebar from "../Dashboards/Sidebar.jsx"
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from "recharts";
@@ -54,10 +55,11 @@ const data = [
 
 
 function AdminDashboard() {
-  console.log("Admin Dashboard Loaded");
   return (
-    
-    <div className="admin-dashboard">
+    <div style={{ minHeight: "100vh" }}>
+      <Sidebar />
+      
+    <div className="admin-dashboard" style={{ flexGrow: 1, padding: "20px"}}>
       
       <div className="row jc-between">
         <h3 className="greeting">Welcome </h3>
@@ -98,7 +100,7 @@ function AdminDashboard() {
        <BarChart/>
        <ChartFunc/>
       </div>
-      
+      </div>
     </div>
   );
 }

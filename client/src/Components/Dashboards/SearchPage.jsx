@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import IngredientSearch from "./IngredSearch";
 import SearchRecipe from "./SearchRecipe";
 import "./UserDashboard.css"; 
-
+import Sidebar from "./UserSidebar";
 const SearchPage = () => {
   const [searchType, setSearchType] = useState("name"); 
 
   return (
-    <div className="search-page-container">
+    <div style={{ minHeight: "100vh" }}>
+      <Sidebar />
+    <div className="search-page-container" style={{marginLeft:"250px"}}>
       <h2 className="search-title">Find Your Favorite Recipes Here</h2>
 
       <div className="search-toggle">
@@ -26,6 +28,7 @@ const SearchPage = () => {
       </div>
 
       {searchType === "name" ? <SearchRecipe /> : <IngredientSearch />}
+    </div>
     </div>
   );
 };

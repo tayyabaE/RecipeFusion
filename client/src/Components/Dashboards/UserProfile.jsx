@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./UserDashboard.css";
 import profileimg from "../../assets/Images/profile.svg";
 import * as Icons from "react-icons/fa6";
-
+import Sidebar from "./UserSidebar";
 const UserProfile = () => {
   const [user, setUser] = useState({
     name: "Ali",
@@ -25,6 +25,8 @@ const UserProfile = () => {
   };
 
   return (
+    <div style={{ minHeight: "100vh" }}>
+      <Sidebar />
     <div className="profile-container">
       <h2>Profile</h2>
       <div className="profile-card">
@@ -73,6 +75,7 @@ const UserProfile = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

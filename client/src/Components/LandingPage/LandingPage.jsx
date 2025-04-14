@@ -36,6 +36,8 @@ function LandingPage() {
 
   return (
     <div className="landingPage">
+      <a id="top"></a>
+
       <header>
         <Navbar />
       </header>
@@ -192,7 +194,7 @@ function LandingPage() {
             </form>
           </div>
         </div>
-      </section>
+      </section>  
 
       <footer className="footer">
       <div className="footer-container">
@@ -225,6 +227,8 @@ function LandingPage() {
         <p>&copy; 2025 Recipe Fusion. All Rights Reserved.</p>
       </div>
     </footer>
+    <a href="#top" id="topButton"> <Icons.FaArrowUp className="icons"/> </a>
+
     </div>
   );
 }

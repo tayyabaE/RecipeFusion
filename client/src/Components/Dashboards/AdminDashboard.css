@@ -2,6 +2,7 @@
   padding: 5px;
   height: 100vh;
   padding-right: 10px;
+  margin-left: 230px;
   flex: 1;
   background: var(--light-grey-color-2);
 }
@@ -153,6 +154,9 @@
 }
 
 @media screen and (max-width: 768px) {
+  .admin-dashboard {
+    margin-left: 60px;
+  }
   .cards-container {
     flex-direction: column;
     align-items: center;
@@ -174,3 +178,4 @@
     max-width: 100%;
   }
 }
+

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import "./Login.css";
-import loginImage from "../../assets/Images/login.svg";
-import { FaEnvelope, FaLock, FaUser } from "react-icons/fa"; // Import icons
-import { useNavigate } from "react-router-dom"; // Navigation for redirection
+import React, { useState } from "react"
+import "./Login.css"
+import * as Icons from 'react-icons/fa6'
+import loginImage from "../../assets/Images/login.svg"
+import { useNavigate } from "react-router-dom"
 
 const Login = () => {
   const navigate = useNavigate(); 
@@ -13,11 +13,9 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Admin Login
     if (username === "admin" && password === "admin123") {
       navigate("/admin");
     }
-    // User Login
     else if (username === "user" && password === "user123") {
       navigate("/userhome");
     }
@@ -43,7 +41,7 @@ const Login = () => {
           <h2 className="section-title">Welcome Back</h2>
           <form onSubmit={handleLogin}>
             <div className="input-container">
-              <FaUser className="icons-colored" />
+              <Icons.FaUser className="icons-colored" />
               <input
                 type="text"
                 placeholder="Username (Optional)"
@@ -52,20 +50,9 @@ const Login = () => {
               />
             </div>
 
+            
             <div className="input-container">
-              <FaEnvelope className="icons-colored" />
-              <input
-                type="email"
-                placeholder="Email (Optional)"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                title="Enter a valid email (e.g., user@example.com)"
-              />
-            </div>
-
-            <div className="input-container">
-              <FaLock className="icons-colored" />
+              <Icons.FaLockOpen className="icons-colored" />
               <input
                 type="password"
                 placeholder="Password"

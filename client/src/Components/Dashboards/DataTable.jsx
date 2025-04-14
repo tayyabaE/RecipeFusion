@@ -1,8 +1,10 @@
 import React from "react";
 import "./DataTable.css";
-
+import Sidebar from "./Sidebar";
 function DataTable({ title, data, columns, actions }) {
   return (
+    <div style={{ minHeight: "100vh" }}>
+      <Sidebar />
     <div className="user-table">
       <h3 className="table-header">{title}</h3>
       <div className="table-responsive">
@@ -39,6 +41,7 @@ function DataTable({ title, data, columns, actions }) {
           </tbody>
         </table>
       </div>
+    </div>
     </div>
   );
 }

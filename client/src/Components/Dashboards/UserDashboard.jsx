@@ -1,6 +1,6 @@
 import React from "react";
 import "./UserDashboard.css";
-
+import Sidebar from "./UserSidebar";
 const UserDashboard = () => {
   const user = {
     name: "M. Ali",
@@ -11,8 +11,9 @@ const UserDashboard = () => {
   };
 
   return (
+    <div style={{ minHeight: "100vh" }}>
+      <Sidebar />
     <div className="dashboard-container">
-
       <div className="welcome-section">
         <h2>WELCOME BACK, {user.name}!</h2>
         <p>Your last login: {user.lastLogin}</p>
@@ -37,6 +38,7 @@ const UserDashboard = () => {
           <li>Password changed successfully</li>
         </ul>
       </div>
+    </div>
     </div>
   );
 };
