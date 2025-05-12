@@ -9,7 +9,7 @@ const SearchPage = () => {
   return (
     <div style={{ minHeight: "100vh" }}>
       <Sidebar />
-    <div className="search-page-container" style={{marginLeft:"250px"}}>
+    <div className="search-page-container" >
       <h2 className="search-title">Find Your Favorite Recipes Here</h2>
 
       <div className="search-toggle">

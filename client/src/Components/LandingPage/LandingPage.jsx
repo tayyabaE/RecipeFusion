@@ -7,7 +7,7 @@ import "./LandingPage.css";
 import contactsvg from "../../assets/Images/contact.svg";
 import footersvg from "../../assets/Images/footer1.svg";
 import footersvg1 from "../../assets/Images/footer.svg";
-
+import axios from 'axios';
 
 function LandingPage() {
   const [recipes, setRecipes] = useState([]);
@@ -15,17 +15,16 @@ function LandingPage() {
 
   useEffect(() => {
     AOS.init({ duration: 800, once: false });
-    AOS.refresh();
-  }, [recipes]);
+  }, []);
 
   const API_URL = `https://api.spoonacular.com/recipes/random?number=15&apiKey=${import.meta.env.VITE_FOOD_API}`;
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        setRecipes(data.recipes);
+        const response = await axios.get(API_URL);
+
+        setRecipes(response.data.recipes); 
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
@@ -170,7 +169,7 @@ function LandingPage() {
       {/*contact us */}
 
       <section className="contact-section" id="contact-section" data-aos="fade-up" >
-        <h2 className="section-title" data-aos="fade-up" data-aos-delay="100">
+        <h2 className="section-title" data-aos="fade-up" data-aos-delay="200">
           Contact Us
         </h2>
 

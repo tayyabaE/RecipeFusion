@@ -1,63 +1,102 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import DataTable from "./DataTable";
 import * as Icons from "react-icons/fa6";
-import img1 from "../../assets/Images/pizza.jpg";
-
-const recipes = [
-  { 
-    id: 1, 
-    name: "Pizza", 
-    category: "Fast Food", 
-    description: "Delicious cheesy pizza with a crispy crust.",
-    image: img1 
-  },
-  { 
-    id: 2, 
-    name: "Biryani", 
-    category: "Pakistani", 
-    description: "Spicy and flavorful Pakistani rice dish.",
-    image: img1 
-  },
-  { 
-    id: 3, 
-    name: "Pasta", 
-    category: "Italian", 
-    description: "Creamy Italian-style pasta with rich sauce.",
-    image: img1 
-  },
-];
-
-const recipeColumns = [
-  { label: "Recipe Name", key: "name" },
-  { label: "Image", key: "image" },
-  { label: "Category", key: "category" },
-  { label: "Description", key: "description" },
-];
-
-const handleDelete = (recipe) => {
-  Swal.fire({
-    title: `Are you sure you want to delete ${recipe.name}?`,
-    text: "This action cannot be undone!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire("Deleted!", `${recipe.name} has been deleted.`, "success");
-      }
-  });
-};
-
-const recipeActions = [
-  { label: "View", icon: <Icons.FaEye />, onClick: (recipe) => alert(`Viewing ${recipe.name}`) },
-  { label: "Delete", icon: <Icons.FaTrash />, onClick: handleDelete },
-];
+import "./DataTable.css";
 
 function RecipesPage() {
-  return <DataTable title="Recipes" data={recipes} columns={recipeColumns} actions={recipeActions} />;
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/all-recipes");
+        const data = await response.json();
+        setRecipes(data);
+      } catch (error) {
+        console.error("Error fetching recipes:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipes();
+  }, []);
+
+  const handleDelete = (recipe) => {
+    Swal.fire({
+      title: `Are you sure you want to delete ${recipe.name}?`,
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/delete-recipes/${recipe.name}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            setRecipes((prev) => prev.filter((r) => r.name !== recipe.name));
+            Swal.fire("Deleted!", data.message, "success");
+          } else {
+            Swal.fire("Error", data.message || "Failed to delete recipe", "error");
+          }
+        } catch (err) {
+          console.error("Delete error:", err.message);
+          Swal.fire("Error", "Failed to delete recipe", "error");
+        }
+      }
+    });
+  };
+
+  const recipeColumns = [
+    { label: "Recipe Name", key: "name" },
+    { label: "Image", key: "image" },
+    { label: "Category", key: "category" },
+  ];
+
+  const recipeActions = [
+    {
+      label: "View",
+      icon: <Icons.FaEye />,
+      onClick: (recipe) => setSelectedRecipe(recipe),
+    },
+    {
+      label: "Delete",
+      icon: <Icons.FaTrash />,
+      onClick: handleDelete,
+    },
+  ];
+
+
+  return (
+    <>
+      <DataTable
+        title="Recipes"
+        data={recipes}
+        columns={recipeColumns}
+        actions={recipeActions}
+      />
+
+      {/* Modal */}
+      {selectedRecipe && (
+        <div className="modal-overlay" onClick={() => setSelectedRecipe(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">{selectedRecipe.name}</h2>
+            <img src={selectedRecipe.image} alt={selectedRecipe.name} className="modal-image" />
+            <p><strong>Category:</strong> {selectedRecipe.category}</p>
+            <p><strong>Description:</strong> {selectedRecipe.description}</p>
+                      <button className="btn-close" onClick={() => setSelectedRecipe(null)}>Close</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default RecipesPage;

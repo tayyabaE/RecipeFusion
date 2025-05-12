@@ -9,6 +9,7 @@ const IngredientSearch = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const userId = localStorage.getItem("userId");
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -25,6 +26,14 @@ const IngredientSearch = () => {
       const API_URL = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients}&apiKey=${import.meta.env.VITE_FOOD_API}&number=20`;
       const response = await axios.get(API_URL);
       setRecipes(response.data);
+
+      await axios.post("http://localhost:5000/api/add-search", {
+        userId,
+        query: ingredients,
+        type: "ingredients",
+        filters: null,
+      });
+
     } catch (error) {
       console.error("Error fetching recipes:", error);
       setError("Something went wrong! Please try again.");

@@ -11,6 +11,7 @@ const SearchRecipe = () => {
   const [filter, setFilter] = useState("No Filter");
   const [cuisine, setCuisine] = useState("No Cuisine");
 
+  const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
   const handleSearch = async (e) => {
@@ -33,12 +34,21 @@ const SearchRecipe = () => {
         API_URL += `&cuisine=${cuisine.toLowerCase().replace(/\s+/g, "-")}`;
       }
 
-      console.log("Fetching from API:", API_URL); 
       const response = await axios.get(API_URL);
-      console.log("API Response:", response.data); 
 
       if (response.data.results && response.data.results.length > 0) {
         setRecipes(response.data.results);
+
+        // Save search history
+        await axios.post("http://localhost:5000/api/add-search", {
+          userId,
+          query,
+          type: "text",
+          filters: {
+            diet: filter !== "No Filter" ? filter : null,
+            cuisine: cuisine !== "No Cuisine" ? cuisine : null,
+          },
+        });
       } else {
         setRecipes([]);
         setError("No recipes found. Try a different search.");

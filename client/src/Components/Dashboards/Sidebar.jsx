@@ -15,32 +15,32 @@ function Sidebar() {
         </div>
         <ul className="menu">
           <li 
-            className={location.pathname === "/admin" ? "active" : ""}
-            onClick={() => navigate("/admin")}
+            className={location.pathname === "/admindashboard" ? "active" : ""}
+            onClick={() => navigate("/admindashboard")}
           >
             <Icons.FaHouse className="icons-colored" /> Home
           </li>
           <li 
-            className={location.pathname === "/users" ? "active" : ""}
-            onClick={() => navigate("/users")}
+            className={location.pathname === "/admindashboard/users" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/users")}
           >
             <Icons.FaUser className="icons-colored" /> Users
           </li>
           <li 
-            className={location.pathname === "/recipes" ? "active" : ""}
-            onClick={() => navigate("/recipes")}
+            className={location.pathname === "/admindashboard/recipes" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/recipes")}
           >
             <Icons.FaUtensils className="icons-colored" /> Recipes
           </li>
           <li 
-            className={location.pathname === "/reviews" ? "active" : ""}
-            onClick={() => navigate("/reviews")}
+            className={location.pathname === "/admindashboard/reviews" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/reviews")}
           >
             <Icons.FaComment className="icons-colored" /> Reviews
           </li>
           <li 
-            className={location.pathname === "/" ? "active" : ""}
-            onClick={() => navigate("/")}
+            className={location.pathname === "/login" ? "active" : ""}
+            onClick={() => navigate("/login")}
           >
             <Icons.FaArrowRightFromBracket className="icons-colored" /> Logout
           </li>
@@ -53,32 +53,32 @@ function Sidebar() {
         </div>
         <ul className="menu">
           <li 
-            className={location.pathname === "/admin" ? "active" : ""}
-            onClick={() => navigate("/admin")}
+            className={location.pathname === "/admindashboard" ? "active" : ""}
+            onClick={() => navigate("/admindashboard")}
           >
             <Icons.FaHouse className="icons-colored" />
           </li>
           <li 
-            className={location.pathname === "/users" ? "active" : ""}
-            onClick={() => navigate("/users")}
+            className={location.pathname === "/admindashboard/users" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/users")}
           >
             <Icons.FaUser className="icons-colored" />
           </li>
           <li 
-            className={location.pathname === "/recipes" ? "active" : ""}
-            onClick={() => navigate("/recipes")}
+            className={location.pathname === "/admindashboard/recipes" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/recipes")}
           >
             <Icons.FaUtensils className="icons-colored" />
           </li>
           <li 
-            className={location.pathname === "/reviews" ? "active" : ""}
-            onClick={() => navigate("/reviews")}
+            className={location.pathname === "/admindashboard/reviews" ? "active" : ""}
+            onClick={() => navigate("/admindashboard/reviews")}
           >
             <Icons.FaComment className="icons-colored" />
           </li>
           <li 
-            className={location.pathname === "/" ? "active" : ""}
-            onClick={() => navigate("/")}
+            className={location.pathname === "/login" ? "active" : ""}
+            onClick={() => navigate("/login")}
           >
             <Icons.FaArrowRightFromBracket className="icons-colored" />
           </li>

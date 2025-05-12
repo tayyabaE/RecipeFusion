@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "./DataTable.css";
 import Swal from "sweetalert2";
 
 const RecipeDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [shoppingList, setShoppingList] = useState([]);
-  
+  const [showModal, setShowModal] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    title: "",
+    review: "",
+    sentiment: "neutral",
+  });
+
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("auth-token");
 
   useEffect(() => {
     const fetchRecipeDetails = async () => {
@@ -21,6 +30,11 @@ const RecipeDetails = () => {
           `https://api.spoonacular.com/recipes/${id}/information?apiKey=${import.meta.env.VITE_FOOD_API}`
         );
         setRecipe(response.data);
+
+        setReviewForm((prevForm) => ({
+          ...prevForm,
+          title: response.data.title,
+        }));
       } catch (error) {
         console.error("Error fetching recipe details:", error);
         setError("Failed to load recipe details.");
@@ -30,48 +44,85 @@ const RecipeDetails = () => {
     fetchRecipeDetails();
   }, [id]);
 
-
-
   const getShoppingList = () => {
     if (recipe) {
-      const ingredients = recipe.extendedIngredients.map((ingredient) => ingredient.original);
+      const ingredients = recipe.extendedIngredients.map(
+        (ingredient) => ingredient.original
+      );
       setShoppingList(ingredients);
     }
   };
 
-  const saveRecipe = () => {
-    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes")) || [];
-  const newRecipe = {
-    id: recipe.id,
-    title: recipe.title,
-    image: recipe.image,
+  const saveRecipe = async () => {
+    if (!userId || !token) {
+      Swal.fire("Not Logged In", "Please log in to save recipes.", "warning");
+      return;
+    }
+
+    const newRecipe = {
+      userId,
+      recipeId: recipe.id,
+      title: recipe.title,
+      image: recipe.image,
+    };
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/saved-recipes", newRecipe, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 201) {
+        Swal.fire({
+          title: "Recipe Saved!",
+          text: "This recipe has been saved to your account.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        Swal.fire("Already Saved", "This recipe is already saved.", "info");
+      } else {
+        Swal.fire("Error", "Could not save the recipe. Try again later.", "error");
+      }
+    }
   };
 
-  if (!savedRecipes.some((r) => r.id === recipe.id)) {
-    savedRecipes.push(newRecipe);
-    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
 
-    Swal.fire({
-      title: "Recipe Saved!",
-      text: "This recipe has been added to your saved recipes.",
-      icon: "success",
-      showCancelButton: true,
-      confirmButtonText: "View Saved Recipes",
-      cancelButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate("/saved-recipes");
-      }
-    });
-  } else {
-    Swal.fire({
-      title: "Already Saved",
-      text: "This recipe is already in your saved recipes.",
-      icon: "info",
-      confirmButtonText: "OK",
-    });
-  }
-};
+    if (!userId || !token) {
+      Swal.fire("Not Logged In", "Please log in to submit a review.", "warning");
+      return;
+    }
+
+    try {
+      const reviewData = {
+        userId,
+        recipeId: recipe.id,
+        title: reviewForm.title,
+        review: reviewForm.review,
+        sentiment: reviewForm.sentiment,
+      };
+
+      const res = await axios.post("http://localhost:5000/api/add-review", reviewData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      Swal.fire("Review Added", "Thanks for your feedback!", "success");
+      setShowModal(false);
+      setReviewForm({
+        title: recipe.title, 
+        review: "",
+        sentiment: "neutral",
+      });
+    } catch (err) {
+      console.error("Review submission failed", err);
+      Swal.fire("Error", "Could not submit review. Try again.", "error");
+    }
+  };
 
   if (loading) return <p className="loading-text">Loading recipe details...</p>;
   if (error) return <p className="error-text">{error}</p>;
@@ -97,11 +148,15 @@ const RecipeDetails = () => {
           : "No instructions available."}
       </ol>
 
-      
-      <button className="back-button" onClick={getShoppingList}>Get Shopping List</button>
-      <button className="back-button" onClick={saveRecipe}>Save Recipe</button>
-
-      
+      <button className="back-button" onClick={getShoppingList}>
+        Get Shopping List
+      </button>
+      <button className="back-button" onClick={saveRecipe}>
+        Save Recipe
+      </button>
+      <button className="back-button" onClick={() => setShowModal(true)}>
+        Add Review
+      </button>
 
       {shoppingList.length > 0 && (
         <div className="shopping-list-container">
@@ -114,7 +169,52 @@ const RecipeDetails = () => {
         </div>
       )}
 
-      <Link to="/userhome" className="back-button">Back to Recipes</Link>
+      <Link to="/userdashboard" className="back-button">
+        Back to Recipes
+      </Link>
+
+      {/* Review Modal */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Add Review</h3>
+            <form onSubmit={handleReviewSubmit}>
+              <input
+                type="text"
+                placeholder="Title"
+                value={reviewForm.title}
+                style={{ color: "#000", backgroundColor: "#fff", fontWeight: "bold" }}
+                readOnly
+              />
+              <textarea
+                placeholder="Write your review"
+                value={reviewForm.review}
+                onChange={(e) =>
+                  setReviewForm({ ...reviewForm, review: e.target.value })
+                }
+                required
+              />
+              <select
+                value={reviewForm.sentiment}
+                onChange={(e) =>
+                  setReviewForm({ ...reviewForm, sentiment: e.target.value })
+                }
+                required
+              >
+                <option value="positive">Positive</option>
+                <option value="neutral">Neutral</option>
+                <option value="negative">Negative</option>
+              </select>
+              <div className="modal-buttons">
+                <button type="submit" className="btn-login">Submit</button>
+                <button type="button" className="btn-login" onClick={() => setShowModal(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

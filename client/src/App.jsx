@@ -14,6 +14,8 @@ import SearchPage from "./Components/Dashboards/SearchPage";
 import UserProfile from "./Components/Dashboards/UserProfile";
 import Login from "./Components/Login/Login";
 import Signup from "./Components/Login/Signup";
+import ProtectedRoute from "./utils/ProtectedRoutes";
+import AdminProtectedRoute from "./utils/AdminProtectedRoute";
 
 function Layout() {
  
@@ -22,18 +24,19 @@ function Layout() {
         <Routes>
           <Route path="*" element={<LandingPage />} />
 
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/users" element={<UserTable />} />
-          <Route path="/recipes" element={<RecipeTable />} />
-          <Route path="/reviews" element={<ReviewsTable />} />
+          
+          <Route path="/admindashboard" element={ <AdminProtectedRoute> <AdminDashboard /> </AdminProtectedRoute>}  />
+          <Route path="/admindashboard/users" element={<AdminProtectedRoute> <UserTable /> </AdminProtectedRoute>} />
+          <Route path="/admindashboard/recipes" element={<AdminProtectedRoute><RecipeTable /></AdminProtectedRoute>} />
+          <Route path="/admindashboard/reviews" element={<AdminProtectedRoute><ReviewsTable /></AdminProtectedRoute>} /> 
 
-          <Route path="/userhome" element={<UserDashboard />} />
-          <Route path="/searchrecipe" element={<SearchRecipe />} />
-          <Route path="/recipe/:id" element={<RecipeDetails />} />
-          <Route path="/search-by-ingredients" element={<IngredientSearch />} />
-          <Route path="/savedrecipes" element={<SaveRecipes />} />
-          <Route path="/searchpage" element={<SearchPage />} />
-          <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/userdashboard" element={ <ProtectedRoute><UserDashboard/></ProtectedRoute>  } />
+          <Route path="/searchrecipe" element={<ProtectedRoute><SearchRecipe /></ProtectedRoute>} /> 
+          <Route path="/recipe/:id"  element={<ProtectedRoute><RecipeDetails /></ProtectedRoute>} /> 
+          <Route path="/search-by-ingredients" element={<ProtectedRoute><IngredientSearch /></ProtectedRoute>} />
+          <Route path="/userdashboard/savedrecipes" element={<ProtectedRoute><SaveRecipes /></ProtectedRoute>} /> 
+          <Route path="/userdashboard/searchpage" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />  
+          <Route path="/userdashboard/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} /> 
 
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

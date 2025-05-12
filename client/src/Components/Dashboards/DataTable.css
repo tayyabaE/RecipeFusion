@@ -1,29 +1,36 @@
 .user-table {
-  margin-top: 10px;
+  margin-top: 30px;
   background: white;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow-x: auto; 
-  max-width: 100%;
-  margin-left: 230px;
-}
-
-.table-responsive {
+  margin-left: 240px;
+  height: 650px; 
+  overflow: hidden;
+  display: flex;
   width: 100%;
-  overflow-x: auto; 
-  display: block;
-  white-space: nowrap;
+  margin-right: 20px;
+  flex-direction: column;
+}
+.table-responsive {
+  flex-grow: 1;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  
 }
 
 .table-responsive::-webkit-scrollbar {
   height: 6px;
+  width: 8px;
   background: var(--light-grey-color-3);
 }
 
 .table-responsive::-webkit-scrollbar-thumb {
   background-color: var(--primary-color);
   border-radius: 5px;
+  
 }
 
 .table-responsive::-webkit-scrollbar-thumb:hover {
@@ -31,6 +38,11 @@
   cursor: pointer;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
 
 .table-header {
   font-size: 1.5rem;
@@ -40,13 +52,6 @@
   text-transform: uppercase;
   position: relative;
   display: inline-block;
-  border-bottom: 4px solid var(--primary-color);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px; 
 }
 
 th,
@@ -105,9 +110,11 @@ td {
   font-size: 1.3rem;
 }
 
+
 @media screen and (max-width: 768px) {
   .user-table{
-    margin-left: 60px;
+    margin-left: 70px;
+    width: 100%;
   }
   th,
   td {
@@ -252,7 +259,7 @@ h3 {
 .shopping-list-container h3 {
   margin-bottom: 10px;
   font-size: 1.3rem;
-  color: var(--primary-color); /* Deep orange color */
+  color: var(--primary-color);
   text-align: center;
 }
 
@@ -357,4 +364,112 @@ h3 {
       font-size: 0.8rem;
       padding: 5px;
   }
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  }
+  
+  .modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 800px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: left;
+  }
+  
+  li {
+    background: #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: left;
+    margin-top: 10px;
+  }
+  
+  .btn-close {
+    background: var(--danger-color); 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+  
+  .btn-close:hover {
+    background: #e05239;
+  }
+  }
+  
+  .modal-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+  }
+  
+  .modal-image {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  }
+  .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
 }

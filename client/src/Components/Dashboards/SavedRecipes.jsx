@@ -1,41 +1,88 @@
 import React, { useState, useEffect } from "react";
-import "./UserDashboard.css"
+import "./UserDashboard.css";
 import Sidebar from "./UserSidebar";
+import axios from "axios";
+import Swal from "sweetalert2";
+
 const SaveRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
 
   useEffect(() => {
-    const recipes = JSON.parse(localStorage.getItem("savedRecipes")) || [];
-    setSavedRecipes(recipes);
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("auth-token");
+
+    if (userId && token) {
+      axios
+        .get(`http://localhost:5000/api/saved-recipes/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setSavedRecipes(res.data))
+        .catch(() => setSavedRecipes([]));
+    }
   }, []);
 
-  const removeRecipe = (id) => {
-    const updatedRecipes = savedRecipes.filter((recipe) => recipe.id !== id);
-    setSavedRecipes(updatedRecipes);
-    localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
-  };
+  const removeRecipe = (recipeId) => {
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("auth-token");
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you really want to remove this recipe?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, remove it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios
+        .delete(`http://localhost:5000/api/saved-recipes/${userId}/${recipeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then(() => {
+          setSavedRecipes((prev) =>
+            prev.filter((r) => r.recipeId !== recipeId)
+          );
+          Swal.fire("Removed!", "The recipe has been removed.", "success");
+        })
+        .catch(() => {
+          Swal.fire("Error", "Failed to remove recipe.", "error");
+        });
+    }
+  });
+};
+
 
   return (
     <div style={{ minHeight: "100vh" }}>
-          <Sidebar />
-    <div className="saved-recipes-container">
-      <h2>Saved Recipes</h2>
-      {savedRecipes.length === 0 ? (
-        <p>No saved recipes.</p>
-      ) : (
-        <ul className="saved-recipe-list">
-          {savedRecipes.map((recipe) => (
-            <li key={recipe.id} className="saved-recipe-item">
-              <img src={recipe.image} alt={recipe.title} className="saved-recipe-image" />
-              <div className="saved-recipe-info">
-                <h3>{recipe.title}</h3>
-                <button onClick={() => removeRecipe(recipe.id)} className="remove-button">Remove</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+      <Sidebar />
+      <div className="saved-recipes-container">
+        <h2>Saved Recipes</h2>
+        {savedRecipes.length === 0 ? (
+          <p>No saved recipes.</p>
+        ) : (
+          <ul className="saved-recipe-list">
+            {savedRecipes.map((recipe) => (
+              <li key={recipe.recipeId} className="saved-recipe-item">
+                <img
+                  src={recipe.image}
+                  alt={recipe.title}
+                  className="saved-recipe-image"
+                />
+                <div className="saved-recipe-info">
+                  <h3>{recipe.title}</h3>
+                  <button
+                    onClick={() => removeRecipe(recipe.recipeId)}
+                    className="remove-button"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

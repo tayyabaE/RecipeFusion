@@ -1,36 +1,71 @@
-import React, { useState } from "react"
-import "./Login.css"
-import * as Icons from 'react-icons/fa6'
-import loginImage from "../../assets/Images/login.svg"
-import { useNavigate } from "react-router-dom"
+import React, { useState } from "react";
+import "./Login.css";
+import * as Icons from "react-icons/fa6";
+import loginImage from "../../assets/Images/login.svg";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const navigate = useNavigate(); 
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+ const handleLogin = async (e) => {
+  e.preventDefault();
 
-    if (username === "admin" && password === "admin123") {
-      navigate("/admin");
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/login",
+      { email, password },
+      { withCredentials: true }
+    );
+
+    const { token, role, username, gender, phone, userId, message } = res.data;
+
+    localStorage.setItem("username", username);
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("email", email);
+    localStorage.setItem("phone", phone);
+    localStorage.setItem("gender", gender);
+    localStorage.setItem("role", role);
+    localStorage.setItem("auth-token", token);
+
+
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      text: message || "You are now logged in",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    if (role === 1) {
+      navigate("/admindashboard");
+    } else {
+      navigate("/userdashboard");
     }
-    else if (username === "user" && password === "user123") {
-      navigate("/userhome");
-    }
-    else {
-      alert("Invalid credentials! Please try again.");
-    }
-  };
+  } catch (err) {
+    const errorMessage =
+      err.response?.data?.message || "Something went wrong. Please try again.";
+
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text: errorMessage,
+    });
+  }
+};
+
 
   return (
     <div id="logsign" className="login-signup-container">
-      
       <header className="navbar">
-        <h1 className="nav-heading"><span>Recipe</span>Fusion</h1>
+        <h1 className="nav-heading">
+          <span>Recipe</span>Fusion
+        </h1>
         <div className="nav-buttons">
-        <button className="btn-login" onClick={() => navigate("/home")}>
+          <button className="btn-login" onClick={() => navigate("/home")}>
             Home
           </button>
         </div>
@@ -41,22 +76,20 @@ const Login = () => {
           <h2 className="section-title">Welcome Back</h2>
           <form onSubmit={handleLogin}>
             <div className="input-container">
-              <Icons.FaUser className="icons-colored" />
+              <Icons.FaEnvelope className="icons-colored" />
               <input
-                type="text"
-                placeholder="Username (Optional)"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            
             <div className="input-container">
               <Icons.FaLockOpen className="icons-colored" />
               <input
                 type="password"
                 placeholder="Password"
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
