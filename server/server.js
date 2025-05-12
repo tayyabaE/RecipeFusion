@@ -2,8 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const expressSession = require('express-session');
-const flash = require('connect-flash');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -26,12 +24,6 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(expressSession({
-  resave: false,
-  saveUninitialized: false,
-  secret: 'abcxyz'
-}));
-app.use(flash());
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
@@ -39,6 +31,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.get('/', (req, res) => {
   res.send('Hello, API is working!');
+});
+
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token');
+  res.json({ message: 'Logged out successfully' });
 });
 
 app.use('/api', authRoutes);

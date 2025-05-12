@@ -18,23 +18,23 @@ function AdminDashboard() {
   const [searchStats, setSearchStats] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/all-users")
-      .then((res) => setUsersCount(res.data.length))
-      .catch((err) => console.error("Error fetching users:", err));
+  axios
+    .get("http://localhost:5000/api/all-users", { withCredentials: true })
+    .then((res) => setUsersCount(res.data.length))
+    .catch((err) => console.error("Error fetching users:", err));
 
-    axios
-      .get("http://localhost:5000/api/all-recipes")
-      .then((res) => setRecipesCount(res.data.length))
-      .catch((err) => console.error("Error fetching recipes:", err));
+  axios
+    .get("http://localhost:5000/api/all-recipes", { withCredentials: true })
+    .then((res) => setRecipesCount(res.data.length))
+    .catch((err) => console.error("Error fetching recipes:", err));
 
-    axios
-      .get("http://localhost:5000/api/all-reviews")
-      .then((res) => setReviewsCount(res.data.length))
-      .catch((err) => console.error("Error fetching reviews:", err));
+  axios
+    .get("http://localhost:5000/api/all-reviews", { withCredentials: true })
+    .then((res) => setReviewsCount(res.data.length))
+    .catch((err) => console.error("Error fetching reviews:", err));
 
-       axios
-    .get("http://localhost:5000/api/reviews-stats")
+  axios
+    .get("http://localhost:5000/api/reviews-stats", { withCredentials: true })
     .then((res) => {
       const stats = res.data.reduce(
         (acc, item) => {
@@ -45,15 +45,19 @@ function AdminDashboard() {
       );
       setReviewStats(stats);
     })
-    .catch((err) => console.error("Error fetching review sentiment stats:", err));
-    axios
-      .get("http://localhost:5000/api/all-searches")
-      .then((res) => {
-        const groupedByDate = groupSearchesByDate(res.data);
-        setSearchStats(groupedByDate);
-      })
-      .catch((err) => console.error("Error fetching search history:", err));
-  }, []);
+    .catch((err) =>
+      console.error("Error fetching review sentiment stats:", err)
+    );
+
+  axios
+    .get("http://localhost:5000/api/all-searches", { withCredentials: true })
+    .then((res) => {
+      const groupedByDate = groupSearchesByDate(res.data);
+      setSearchStats(groupedByDate);
+    })
+    .catch((err) => console.error("Error fetching search history:", err));
+}, []);
+
 
   const groupSearchesByDate = (searches) => {
     const grouped = searches.reduce((acc, search) => {

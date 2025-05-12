@@ -9,8 +9,6 @@ const IngredientSearch = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem("userId");
-
   const handleSearch = async (e) => {
     e.preventDefault();
     
@@ -27,12 +25,16 @@ const IngredientSearch = () => {
       const response = await axios.get(API_URL);
       setRecipes(response.data);
 
-      await axios.post("http://localhost:5000/api/add-search", {
-        userId,
-        query: ingredients,
-        type: "ingredients",
-        filters: null,
-      });
+     
+      await axios.post(
+        "http://localhost:5000/api/add-search",
+        {
+          query: ingredients,
+          type: "ingredients",
+          filters: null,
+        },
+        { withCredentials: true } 
+      );
 
     } catch (error) {
       console.error("Error fetching recipes:", error);

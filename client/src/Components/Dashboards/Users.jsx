@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import DataTable from "./DataTable";
 import * as Icons from "react-icons/fa6";
 import "./DataTable.css";
-import axios from "axios"; 
+import axios from "axios";
 
 const userColumns = [
   { label: "Username", key: "username" },
@@ -15,12 +15,16 @@ function UsersPage() {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/all-users")
+    axios.get("http://localhost:5000/api/all-users", { withCredentials: true }) // Ensure cookies are sent
       .then(response => {
         setUsers(response.data);
       })
       .catch(error => {
         console.error("Error fetching users:", error);
+        if (error.response && error.response.status === 401) {
+         
+          window.location.href = "/login";
+        }
       });
   }, []);
 
@@ -40,7 +44,7 @@ function UsersPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:5000/api/delete-user/${user.username}`);
+          const response = await axios.delete(`http://localhost:5000/api/delete-user/${user.username}`, { withCredentials: true }); // Ensure cookies are sent
           if (response.status === 200) {
             Swal.fire("Deleted!", response.data.message, "success");
             setUsers((prevUsers) => prevUsers.filter((u) => u.username !== user.username));

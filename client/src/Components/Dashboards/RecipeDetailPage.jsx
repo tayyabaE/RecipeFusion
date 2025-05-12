@@ -18,9 +18,6 @@ const RecipeDetails = () => {
     sentiment: "neutral",
   });
 
-  const userId = localStorage.getItem("userId");
-  const token = localStorage.getItem("auth-token");
-
   useEffect(() => {
     const fetchRecipeDetails = async () => {
       setLoading(true);
@@ -54,7 +51,8 @@ const RecipeDetails = () => {
   };
 
   const saveRecipe = async () => {
-    if (!userId || !token) {
+    const userId = localStorage.getItem("userId"); // Still retrieve userId from localStorage if needed
+    if (!userId) {
       Swal.fire("Not Logged In", "Please log in to save recipes.", "warning");
       return;
     }
@@ -67,11 +65,13 @@ const RecipeDetails = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:5000/api/saved-recipes", newRecipe, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/saved-recipes",
+        newRecipe,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 201) {
         Swal.fire({
@@ -93,7 +93,8 @@ const RecipeDetails = () => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userId || !token) {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
       Swal.fire("Not Logged In", "Please log in to submit a review.", "warning");
       return;
     }
@@ -107,9 +108,13 @@ const RecipeDetails = () => {
         sentiment: reviewForm.sentiment,
       };
 
-      const res = await axios.post("http://localhost:5000/api/add-review", reviewData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/add-review",
+        reviewData,
+        { 
+          withCredentials: true, 
+        }
+      );
 
       Swal.fire("Review Added", "Thanks for your feedback!", "success");
       setShowModal(false);
@@ -183,7 +188,7 @@ const RecipeDetails = () => {
                 type="text"
                 placeholder="Title"
                 value={reviewForm.title}
-                style={{ color: "#000", backgroundColor: "#fff", fontWeight: "bold" }}
+                style={{fontSize:16, color: "#000", backgroundColor: "#fff"}}
                 readOnly
               />
               <textarea
@@ -199,6 +204,7 @@ const RecipeDetails = () => {
                 onChange={(e) =>
                   setReviewForm({ ...reviewForm, sentiment: e.target.value })
                 }
+                style={{fontSize:16}}
                 required
               >
                 <option value="positive">Positive</option>

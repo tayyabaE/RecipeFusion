@@ -11,52 +11,49 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await axios.post(
-      "http://localhost:5000/api/login",
-      { email, password },
-      { withCredentials: true }
-    );
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/login",
+        { email, password },
+        { withCredentials: true } 
+      );
 
-    const { token, role, username, gender, phone, userId, message } = res.data;
+      const { role, username, gender, phone, userId, message, email: returnedEmail } = res.data;
 
-    localStorage.setItem("username", username);
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("email", email);
-    localStorage.setItem("phone", phone);
-    localStorage.setItem("gender", gender);
-    localStorage.setItem("role", role);
-    localStorage.setItem("auth-token", token);
+      localStorage.setItem("username", username);
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("email", returnedEmail);
+      localStorage.setItem("phone", phone);
+      localStorage.setItem("gender", gender);
+      localStorage.setItem("role", role);
 
+      await Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: message || "You are now logged in",
+        showConfirmButton: false,
+        timer: 1500,
+      });
 
-    await Swal.fire({
-      icon: "success",
-      title: "Login Successful",
-      text: message || "You are now logged in",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+      if (role === 1) {
+        navigate("/admindashboard");
+      } else {
+        navigate("/userdashboard");
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Something went wrong. Please try again.";
 
-    if (role === 1) {
-      navigate("/admindashboard");
-    } else {
-      navigate("/userdashboard");
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: errorMessage,
+      });
     }
-  } catch (err) {
-    const errorMessage =
-      err.response?.data?.message || "Something went wrong. Please try again.";
-
-    Swal.fire({
-      icon: "error",
-      title: "Login Failed",
-      text: errorMessage,
-    });
-  }
-};
-
+  };
 
   return (
     <div id="logsign" className="login-signup-container">

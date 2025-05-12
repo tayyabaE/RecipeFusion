@@ -12,15 +12,28 @@ function RecipesPage() {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/all-recipes");
+        // Including credentials (cookies or authorization token) for the request
+        const response = await fetch("http://localhost:5000/api/all-recipes", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("auth-token")}`, // Send token from localStorage (if applicable)
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch recipes");
+        }
+
         const data = await response.json();
         setRecipes(data);
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
+        Swal.fire("Error", error.message, "error");
       } finally {
         setLoading(false);
       }
     };
+
     fetchRecipes();
   }, []);
 
@@ -38,7 +51,11 @@ function RecipesPage() {
         try {
           const res = await fetch(`http://localhost:5000/api/delete-recipes/${recipe.name}`, {
             method: "DELETE",
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("auth-token")}`, // Send token for delete
+            },
           });
+
           const data = await res.json();
           if (res.ok) {
             setRecipes((prev) => prev.filter((r) => r.name !== recipe.name));
@@ -73,25 +90,36 @@ function RecipesPage() {
     },
   ];
 
-
   return (
     <>
-      <DataTable
-        title="Recipes"
-        data={recipes}
-        columns={recipeColumns}
-        actions={recipeActions}
-      />
+      {/* Loading indicator */}
+      {loading && <div className="loading-indicator">Loading recipes...</div>}
+
+      {/* DataTable */}
+      {!loading && (
+        <DataTable
+          title="Recipes"
+          data={recipes}
+          columns={recipeColumns}
+          actions={recipeActions}
+        />
+      )}
 
       {/* Modal */}
       {selectedRecipe && (
         <div className="modal-overlay" onClick={() => setSelectedRecipe(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2 className="modal-title">{selectedRecipe.name}</h2>
-            <img src={selectedRecipe.image} alt={selectedRecipe.name} className="modal-image" />
+            <img
+              src={selectedRecipe.image}
+              alt={selectedRecipe.name}
+              className="modal-image"
+            />
             <p><strong>Category:</strong> {selectedRecipe.category}</p>
             <p><strong>Description:</strong> {selectedRecipe.description}</p>
-                      <button className="btn-close" onClick={() => setSelectedRecipe(null)}>Close</button>
+            <button className="btn-close" onClick={() => setSelectedRecipe(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}

@@ -7,15 +7,7 @@ const UserDashboard = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [searches, setSearches] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
-
-  const userId = localStorage.getItem("userId");
-  const username = localStorage.getItem("username") || "User";
-
-  const user = {
-    name: username,
-    savedRecipes: savedRecipes.length,
-    searches: searches.length,
-  };
+  const [user, setUser] = useState(null); // Store user data
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -29,15 +21,43 @@ const UserDashboard = () => {
       }
     };
 
-    const fetchSearches = async () => {
-      if (!userId) {
-        console.warn("No user ID found in localStorage.");
-        return;
-      }
+    // Fetch recommendations only once
+    fetchRecommendations();
+  }, []); // Empty dependency array means it only runs once when the component mounts
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/fetchuser", 
+          {},
+          { withCredentials: true } // Ensure cookies are sent
+        );
+
+        if (response.data.success) {
+          setUser(response.data.data); // Set user data
+        } else {
+          console.warn("User not found or unauthorized");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        // Redirect to login or show error
+        window.location.href = "/login";
+      }
+    };
+
+    // Fetch user data when the component mounts
+    fetchUserData();
+  }, []); // Empty dependency array means this runs only once on mount
+
+  useEffect(() => {
+    if (!user) return; // Don't fetch if user is not available yet
+
+    const fetchSearches = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/user-searches`, {
-          params: { userId },
+          params: { userId: user._id }, // Use user._id for API
+          withCredentials: true, // Send cookie with request
         });
         setSearches(res.data);
       } catch (error) {
@@ -46,36 +66,39 @@ const UserDashboard = () => {
     };
 
     const fetchSavedRecipes = async () => {
-      if (!userId) return;
-
       try {
-        const res = await axios.get(`http://localhost:5000/api/saved-recipes/${userId}`);
+        const res = await axios.get(
+          `http://localhost:5000/api/saved-recipes/${user._id}`,
+          { withCredentials: true } // Send cookie with request
+        );
         setSavedRecipes(res.data);
       } catch (error) {
         console.error("Failed to fetch saved recipes:", error);
       }
     };
 
-    fetchRecommendations();
     fetchSearches();
     fetchSavedRecipes();
-  }, [userId]);
+  }, [user]); 
+  if (!user) {
+    return <p>Loading user data...</p>; 
+  }
 
   return (
-    <div style={{ display: "flex", height: "100vh", flexDirection: "row"  }} className="dashboard-main">
+    <div style={{ display: "flex", height: "100vh", flexDirection: "row" }} className="dashboard-main">
       <Sidebar />
       <div className="dashboard-left">
         <div className="welcome-section">
-          <h2>WELCOME BACK, {user.name}</h2>
+          <h2>WELCOME BACK, {user.username}</h2>
         </div>
 
         <div className="stats-container">
           <div className="stat-card">
-            <h3>{user.savedRecipes}</h3>
+            <h3>{savedRecipes.length}</h3>
             <p>Saved Recipes</p>
           </div>
           <div className="stat-card">
-            <h3>{user.searches}</h3>
+            <h3>{searches.length}</h3>
             <p>Searches Made</p>
           </div>
         </div>

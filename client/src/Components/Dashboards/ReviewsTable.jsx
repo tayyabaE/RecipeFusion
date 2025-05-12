@@ -5,11 +5,12 @@ import * as Icons from "react-icons/fa6";
 import axios from "axios";
 
 const reviewColumns = [
-  { label: "Review", key: "comment" },
-  { label: "Username", key: "reviewer.username" },
-  { label: "Email", key: "reviewer.email" },
-  { label: "Rating", key: "rating" }, 
-  { label: "Recipe Name", key: "recipe.name" },
+  { label: "Title", key: "title" },
+  { label: "Review", key: "review" },
+  { label: "Username", key: "userId.username" },
+  { label: "Email", key: "userId.email" },
+  { label: "Rating", key: "sentiment" },
+  
 ];
 
 function ReviewsPage() {
@@ -20,7 +21,7 @@ function ReviewsPage() {
     const fetchReviews = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/all-reviews");
-        
+
         if (Array.isArray(res.data)) {
           setReviews(res.data);
         } else if (Array.isArray(res.data.reviews)) {
@@ -28,6 +29,8 @@ function ReviewsPage() {
         } else {
           setReviews([]);
         }
+
+        console.log("Fetched Reviews:", res.data);
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
         Swal.fire("Error", "Failed to fetch reviews", "error");
@@ -41,7 +44,7 @@ function ReviewsPage() {
 
   const handleDelete = async (review) => {
     Swal.fire({
-      title: `Are you sure you want to delete this review by ${review.reviewer.username}?`,
+      title: `Delete review by ${review.userId.username}?`,
       text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
@@ -51,19 +54,14 @@ function ReviewsPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete("http://localhost:5000/api/delete-reviews", {
-            params: {
-              reviewerId: review.reviewer._id,
-              recipeId: review.recipe._id,
-            },
-          });
+          await axios.delete("http://localhost:5000/api/reviews/" + review.userId._id + "/" + review.recipeId);
 
           setReviews((prev) =>
             prev.filter(
               (r) =>
                 !(
-                  r.reviewer._id === review.reviewer._id &&
-                  r.recipe._id === review.recipe._id
+                  r.userId._id === review.userId._id &&
+                  r.recipeId === review.recipeId
                 )
             )
           );
@@ -81,13 +79,13 @@ function ReviewsPage() {
     { label: "Delete", icon: <Icons.FaTrash />, onClick: handleDelete },
   ];
 
-
   return (
     <DataTable
       title="Reviews"
       data={Array.isArray(reviews) ? reviews : []}
       columns={reviewColumns}
       actions={reviewActions}
+      loading={loading}
     />
   );
 }

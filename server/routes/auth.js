@@ -61,14 +61,21 @@ router.post("/login", async (req, res) => {
     }
 
     const token = generateToken(user);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000, 
+    });
+
     res.json({
-      token,
       userId: user._id,
-      email:user.email,
-      phone:user.phone,
-      gender:user.email,
+      email: user.email,
+      phone: user.phone,
+      gender: user.gender,
       role: user.role,
-      username: user.username, 
+      username: user.username,
       message: user.role === 2 ? "User logged in" : "Admin logged in",
     });
   } catch (err) {
@@ -76,6 +83,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 // GET /api/auth/fetchuser
 router.post("/fetchuser", verifyuser, async (req, res) => {
