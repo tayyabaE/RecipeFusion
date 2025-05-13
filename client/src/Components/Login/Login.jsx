@@ -61,7 +61,7 @@ const Login = () => {
         <h1 className="nav-heading">
           <span>Recipe</span>Fusion
         </h1>
-        <div className="nav-buttons">
+        <div className="nav-button">
           <button className="btn-login" onClick={() => navigate("/home")}>
             Home
           </button>

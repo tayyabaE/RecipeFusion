@@ -22,7 +22,7 @@ const Navbar = () => {
           <li><Link to="popularRecipes" smooth={true} duration={500} offset={-100}>Recipes</Link></li>
           <li><Link to="contact-section" smooth={true} duration={500} offset={-100}>Contact Us</Link></li>
         </ul>
-        <button className="btn-login" onClick={() => navigate('/login')}>Login</button>
+        <button className="btn-loginn" onClick={() => navigate('/login')}>Login</button>
 
         <button className="menu-toggle" onClick={toggleSidebar}>
           <Icons.FaBars className="icons-colored"/>

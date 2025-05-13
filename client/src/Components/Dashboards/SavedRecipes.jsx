@@ -54,14 +54,14 @@ const SaveRecipes = () => {
 
 
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div style={{ display: "flex", height: "100vh", flexDirection: "row", background: '#f9fafb' }}>
       <Sidebar />
       <div className="saved-recipes-container">
         <h2>Saved Recipes</h2>
         {savedRecipes.length === 0 ? (
           <p>No saved recipes.</p>
         ) : (
-          <ul className="saved-recipe-list">
+          <ul className="saved-recipe-list" style={{ padding: 0, listStyle: "none" }}>
             {savedRecipes.map((recipe) => (
               <li key={recipe.recipeId} className="saved-recipe-item">
                 <img

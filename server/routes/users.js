@@ -48,7 +48,6 @@ router.get('/all-users', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-//get specific user
 //GET /api/users/username/:username 
 router.get('/getuser/:username', async (req, res) => {
   try {
@@ -85,37 +84,42 @@ router.delete('/delete-user/:username', async (req, res) => {
   }
 });
 
-// PUT /api/users/username/:username
-router.put('/update-user/:username', async (req, res) => {
+// PUT /api/users/update
+router.put('/update-user', async (req, res) => {
   try {
-    const { username } = req.params;
-    const { email, phone, gender, password } = req.body;
+    const { email, username, phone, gender, password } = req.body;
 
-    const updateData = {};
-    if (email) updateData.email = email;
-    if (phone) updateData.phone = phone;
-    if (gender) updateData.gender = gender;
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required to update user' });
+    }
 
+    const updateFields = {};
+
+    if (username) updateFields.username = username;
+    if (phone) updateFields.phone = phone;
+    if (gender) updateFields.gender = gender;
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      updateData.password = hashedPassword;
+      updateFields.password = hashedPassword;
     }
 
     const updatedUser = await User.findOneAndUpdate(
-      { username },
-      { $set: updateData },
-      { new: true, runValidators: true, context: 'query' }
-    ).select('-password'); // Exclude password from response
+      { email },
+      { $set: updateFields },
+      { new: true, projection: { password: 0 } } // Return updated user, exclude password
+    );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ message: 'User updated successfully.', user: updatedUser });
+    res.status(200).json({ message: 'User updated successfully', user: updatedUser });
   } catch (error) {
     console.error('Error updating user:', error.message);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 module.exports = router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import DataTable from "./DataTable";
-import * as Icons from "react-icons/fa6";
+import * as Icons from "react-icons/fa";
 import "./DataTable.css";
 import axios from "axios";
 
@@ -13,6 +13,10 @@ const userColumns = [
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+const [editData, setEditData] = useState({});
+
+
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/all-users", { withCredentials: true }) // Ensure cookies are sent
@@ -59,6 +63,33 @@ function UsersPage() {
     });
   };
 
+  const handleEdit = (user) => {
+  setEditUser(user);
+  setEditData({ ...user });
+};
+
+const handleEditChange = (e) => {
+  setEditData({ ...editData, [e.target.name]: e.target.value });
+};
+
+const submitEdit = async () => {
+  try {
+    const res = await axios.put("http://localhost:5000/api/update-user", editData, {
+      withCredentials: true,
+    });
+
+    Swal.fire("Success", "User updated successfully!", "success");
+
+    setUsers((prev) =>
+      prev.map((u) => (u.email === editData.email ? res.data.user : u))
+    );
+    setEditUser(null);
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", err.response?.data?.message || "Failed to update user.", "error");
+  }
+};
+
   return (
     <>
       <DataTable
@@ -67,6 +98,7 @@ function UsersPage() {
         columns={userColumns}
         actions={[
           { label: "View", icon: <Icons.FaEye />, onClick: handleView },
+           { label: "Edit", icon: <Icons.FaEdit />, onClick: handleEdit },
           { label: "Delete", icon: <Icons.FaTrash />, onClick: handleDelete },
         ]}
       />
@@ -85,6 +117,57 @@ function UsersPage() {
           </div>
         </div>
       )}
+
+      {editUser && (
+  <div className="edit-modal">
+    <div className="modal-content">
+      <h3>Edit User</h3>
+
+      <label>Username:</label>
+      <input
+        type="text"
+        name="username"
+        value={editData.username}
+        onChange={handleEditChange}
+      />
+
+      <label>Email (read-only):</label>
+      <input
+        type="email"
+        name="email"
+        value={editData.email}
+        readOnly
+      />
+
+      <label>Phone:</label>
+      <input
+        type="tel"
+        name="phone"
+        value={editData.phone}
+        onChange={handleEditChange}
+      />
+
+      <label>Gender:</label>
+      <select
+        name="gender"
+        value={editData.gender}
+        onChange={handleEditChange}
+      >
+        <option value="">Select</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+
+      <div className="modal-buttons">
+        <button onClick={submitEdit}>Save</button>
+        <button onClick={() => setEditUser(null)}>Cancel</button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </>
   );
 }

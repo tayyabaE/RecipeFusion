@@ -6,6 +6,6 @@
     "react-apexcharts": "^1.7.0"
   },
   "scripts": {
-    "both": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\""
+    "both": "concurrently \"cd client && npm run dev -- --host\" \"cd server && npm run dev -- --host\""
   }
 }

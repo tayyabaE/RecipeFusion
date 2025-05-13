@@ -63,7 +63,7 @@ span{
   cursor: pointer;
 }
 
-.btn-login {
+.btn-loginn {
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.5px;
@@ -77,13 +77,13 @@ span{
   border: 2px solid var(--primary-color);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
-.btn-login:hover{
+.btn-loginn:hover{
   background-color: var(--primary-color);
   color: var(--light-grey-color-1);
   cursor: pointer;
 }
 @media (max-width: 768px) {
-  .nav-links, .btn-login {
+  .nav-links, .btn-loginn {
     display: none;
   }
   

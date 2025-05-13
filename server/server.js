@@ -14,7 +14,7 @@ const savedRecipe = require('./routes/savedRecipes');
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://recipe-fusion.vercel.app'],
+  origin: true,
   methods: ["GET", "POST", "DELETE", "PUT"],
   credentials: true,
   allowedHeaders: ['Content-Type', 'auth-token', "Authorization"],
