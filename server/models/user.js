@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 2 //  1 = admin 2 = user
   },
+otpHash: String,
+  otpExpiry: Date,
+
+
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

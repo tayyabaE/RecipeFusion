@@ -11,17 +11,31 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [otpStep, setOtpStep] = useState(1); // 1 = email, 2 = OTP, 3 = reset password
+  const [otp, setOtp] = useState(new Array(6).fill(""));
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await axios.post(
         "http://localhost:5000/api/login",
         { email, password },
-        { withCredentials: true } 
+        { withCredentials: true }
       );
 
-      const { role, username, gender, phone, userId, message, email: returnedEmail } = res.data;
+      const {
+        role,
+        username,
+        gender,
+        phone,
+        userId,
+        message,
+        email: returnedEmail,
+      } = res.data;
 
       localStorage.setItem("username", username);
       localStorage.setItem("userId", userId);
@@ -38,20 +52,27 @@ const Login = () => {
         timer: 1500,
       });
 
-      if (role === 1) {
-        navigate("/admindashboard");
-      } else {
-        navigate("/userdashboard");
-      }
+      navigate(role === 1 ? "/admindashboard" : "/userdashboard");
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "Something went wrong. Please try again.";
-
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: errorMessage,
+        text:
+          err.response?.data?.message ||
+          "Something went wrong. Please try again.",
       });
+    }
+  };
+
+  const handleOtpChange = (value, index) => {
+    if (isNaN(value)) return;
+
+    const updatedOtp = [...otp];
+    updatedOtp[index] = value;
+    setOtp(updatedOtp);
+
+    if (value && index < 5) {
+      document.getElementById(`otp-${index + 1}`)?.focus();
     }
   };
 
@@ -92,6 +113,16 @@ const Login = () => {
               />
             </div>
 
+            <div className="forgot-password">
+              <button
+                type="button"
+                className="forgot-btn"
+                onClick={() => setShowForgotModal(true)}
+              >
+                Forgot Password?
+              </button>
+            </div>
+
             <button type="submit" className="btn-login">
               Login
             </button>
@@ -109,6 +140,230 @@ const Login = () => {
           <img src={loginImage} alt="Login Illustration" />
         </div>
       </div>
+
+      {/* forgot pass  */}
+      {showForgotModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            {/* enter email to send OTP form */}
+            {otpStep === 1 && (
+              <>
+                <h2>Forgot Password</h2>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    try {
+                      await axios.post(
+                        "http://localhost:5000/api/forgot-password",
+                        {
+                          email: forgotEmail,
+                        }
+                      );
+
+                      Swal.fire({
+                        icon: "success",
+                        title: "Email Sent",
+                        text: "OTP sent to your email.",
+                      });
+
+                      setOtpStep(2);
+                    } catch (err) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Failed",
+                        text:
+                          err.response?.data?.message || "Could not send OTP.",
+                      });
+                      console.log(err)
+                    }
+                  }}
+                >
+                  <p>Enter your email to receive OTP</p>
+                  <input
+                    type="email"
+                    placeholder="Enter your registered email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    required
+                  />
+                  <div className="modal-actions">
+                    <button type="submit" className="btn-submit">
+                      Send OTP
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-cancel"
+                      onClick={() => {
+                        setShowForgotModal(false);
+                        setOtpStep(1);
+                        setOtp(new Array(6).fill(""));
+                        setForgotEmail("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+
+            {/* enter the otp form */}
+            {otpStep === 2 && (
+              <>
+                <div className="flex flex-col gap-4 w-full">
+                  <label
+                    htmlFor="otp"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Enter 6-digit OTP
+                  </label>
+                  <div className="otp-container">
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        type="text"
+                        id={`otp-${index}`}
+                        className="otp-input"
+                        maxLength="1"
+                        value={digit}
+                        onChange={(e) => handleOtpChange(e.target.value, index)}
+                        onFocus={(e) => e.target.select()}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  <button
+                    className="btn-submit"
+                    onClick={async () => {
+                      const enteredOtp = otp.join("");
+                      if (enteredOtp.length !== 6) {
+                        return Swal.fire({
+                          icon: "warning",
+                          title: "Invalid OTP",
+                          text: "Please enter a 6-digit OTP.",
+                        });
+                      }
+
+                      try {
+                        await axios.post(
+                          "http://localhost:5000/api/verify-otp",
+                          {
+                            email: forgotEmail,
+                            otp: enteredOtp,
+                          }
+                        );
+
+                        setOtpStep(3);
+                      } catch (err) {
+                        Swal.fire({
+                          icon: "error",
+                          title: "OTP Verification Failed",
+                          text:
+                            err.response?.data?.message ||
+                            "Invalid or expired OTP.",
+                        });
+                      }
+                    }}
+                  >
+                    Verify OTP
+                  </button>
+                  <button
+                    className="btn-cancel"
+                    onClick={() => {
+                      setOtpStep(1);
+                      setOtp(new Array(6).fill(""));
+                    }}
+                  >
+                    Back
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* reset pass form */}
+            {otpStep === 3 && (
+              <>
+                <h2>Reset Password</h2>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+
+                    if (newPassword !== confirmPassword) {
+                      return Swal.fire({
+                        icon: "warning",
+                        title: "Password Mismatch",
+                        text: "Passwords do not match.",
+                      });
+                    }
+
+                    try {
+                      await axios.post(
+                        "http://localhost:5000/api/reset-password",
+                        {
+                          email: forgotEmail,
+                          newPassword,
+                          confirmPassword,
+                        }
+                      );
+
+                      Swal.fire({
+                        icon: "success",
+                        title: "Password Updated",
+                        text: "You can now log in with your new password.",
+                      });
+
+                      setShowForgotModal(false);
+                      setOtpStep(1);
+                      setOtp(new Array(6).fill(""));
+                      setForgotEmail("");
+                      setNewPassword("");
+                      setConfirmPassword("");
+                    } catch (err) {
+                      Swal.fire({
+                        icon: "error",
+                        title: "Reset Failed",
+                        text:
+                          err.response?.data?.message ||
+                          "Could not reset password. Try again.",
+                      });
+                    }
+                  }}
+                >
+                  <input type="email" value={forgotEmail} readOnly />
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                  <div className="modal-actions">
+                    <button type="submit" className="btn-submit">
+                      Submit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-cancel"
+                      onClick={() => setShowForgotModal(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
