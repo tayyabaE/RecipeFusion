@@ -16,7 +16,7 @@ function RecipesPage() {
         const response = await fetch("http://localhost:5000/api/all-recipes", {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("auth-token")}`, // Send token from localStorage (if applicable)
+            Authorization: `Bearer ${localStorage.getItem("auth-token")}`, // Send token from localStorage (if applicable)
           },
         });
 
@@ -49,19 +49,26 @@ function RecipesPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:5000/api/delete-recipes/${recipe.name}`, {
-            method: "DELETE",
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem("auth-token")}`, // Send token for delete
-            },
-          });
+          const res = await fetch(
+            `http://localhost:5000/api/delete-recipes/${recipe.name}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("auth-token")}`, // Send token for delete
+              },
+            }
+          );
 
           const data = await res.json();
           if (res.ok) {
             setRecipes((prev) => prev.filter((r) => r.name !== recipe.name));
             Swal.fire("Deleted!", data.message, "success");
           } else {
-            Swal.fire("Error", data.message || "Failed to delete recipe", "error");
+            Swal.fire(
+              "Error",
+              data.message || "Failed to delete recipe",
+              "error"
+            );
           }
         } catch (err) {
           console.error("Delete error:", err.message);
@@ -92,18 +99,14 @@ function RecipesPage() {
 
   return (
     <>
-      {/* Loading indicator */}
-      {loading && <div className="loading-indicator">Loading recipes...</div>}
-
       {/* DataTable */}
-      {!loading && (
-        <DataTable
-          title="Recipes"
-          data={recipes}
-          columns={recipeColumns}
-          actions={recipeActions}
-        />
-      )}
+      <DataTable
+        title="Recipes"
+        data={recipes}
+        columns={recipeColumns}
+        actions={recipeActions}
+        loading={loading}
+      />
 
       {/* Modal */}
       {selectedRecipe && (
@@ -115,9 +118,16 @@ function RecipesPage() {
               alt={selectedRecipe.name}
               className="modal-image"
             />
-            <p><strong>Category:</strong> {selectedRecipe.category}</p>
-            <p><strong>Description:</strong> {selectedRecipe.description}</p>
-            <button className="btn-close" onClick={() => setSelectedRecipe(null)}>
+            <p>
+              <strong>Category:</strong> {selectedRecipe.category}
+            </p>
+            <p>
+              <strong>Description:</strong> {selectedRecipe.description}
+            </p>
+            <button
+              className="btn-close"
+              onClick={() => setSelectedRecipe(null)}
+            >
               Close
             </button>
           </div>

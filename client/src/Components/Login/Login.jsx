@@ -5,6 +5,7 @@ import loginImage from "../../assets/Images/login.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Loader from "../Loader";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,9 +18,11 @@ const Login = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         "http://localhost:5000/api/login",
@@ -61,6 +64,8 @@ const Login = () => {
           err.response?.data?.message ||
           "Something went wrong. Please try again.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,6 +83,8 @@ const Login = () => {
 
   return (
     <div id="logsign" className="login-signup-container">
+      {loading && <Loader />}
+
       <header className="navbar">
         <h1 className="nav-heading">
           <span>Recipe</span>Fusion
@@ -152,6 +159,7 @@ const Login = () => {
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault();
+                    setLoading(true);
                     try {
                       await axios.post(
                         "http://localhost:5000/api/forgot-password",
@@ -174,7 +182,9 @@ const Login = () => {
                         text:
                           err.response?.data?.message || "Could not send OTP.",
                       });
-                      console.log(err)
+                      console.log(err);
+                    } finally {
+                      setLoading(false);
                     }
                   }}
                 >
@@ -184,12 +194,8 @@ const Login = () => {
                     placeholder="Enter your registered email"
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    required
                   />
                   <div className="modal-actions">
-                    <button type="submit" className="btn-submit">
-                      Send OTP
-                    </button>
                     <button
                       type="button"
                       className="btn-cancel"
@@ -201,6 +207,9 @@ const Login = () => {
                       }}
                     >
                       Cancel
+                    </button>
+                    <button type="submit" className="btn-submit">
+                      Send OTP
                     </button>
                   </div>
                 </form>
@@ -235,6 +244,15 @@ const Login = () => {
 
                 <div className="modal-actions">
                   <button
+                    className="btn-cancel"
+                    onClick={() => {
+                      setOtpStep(1);
+                      setOtp(new Array(6).fill(""));
+                    }}
+                  >
+                    Back
+                  </button>
+                  <button
                     className="btn-submit"
                     onClick={async () => {
                       const enteredOtp = otp.join("");
@@ -246,6 +264,7 @@ const Login = () => {
                         });
                       }
 
+                      setLoading(true);
                       try {
                         await axios.post(
                           "http://localhost:5000/api/verify-otp",
@@ -264,19 +283,12 @@ const Login = () => {
                             err.response?.data?.message ||
                             "Invalid or expired OTP.",
                         });
+                      } finally {
+                        setLoading(false);
                       }
                     }}
                   >
                     Verify OTP
-                  </button>
-                  <button
-                    className="btn-cancel"
-                    onClick={() => {
-                      setOtpStep(1);
-                      setOtp(new Array(6).fill(""));
-                    }}
-                  >
-                    Back
                   </button>
                 </div>
               </>
@@ -298,6 +310,7 @@ const Login = () => {
                       });
                     }
 
+                    setLoading(true);
                     try {
                       await axios.post(
                         "http://localhost:5000/api/reset-password",
@@ -328,6 +341,8 @@ const Login = () => {
                           err.response?.data?.message ||
                           "Could not reset password. Try again.",
                       });
+                    } finally {
+                      setLoading(false);
                     }
                   }}
                 >
@@ -347,15 +362,15 @@ const Login = () => {
                     required
                   />
                   <div className="modal-actions">
-                    <button type="submit" className="btn-submit">
-                      Submit
-                    </button>
                     <button
                       type="button"
                       className="btn-cancel"
                       onClick={() => setShowForgotModal(false)}
                     >
                       Cancel
+                    </button>
+                    <button type="submit" className="btn-submit">
+                      Submit
                     </button>
                   </div>
                 </form>

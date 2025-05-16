@@ -134,9 +134,6 @@ router.post("/verify-otp", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Email not found" });
 
-    console.log("Stored hash:", user.otpHash);
-    console.log("Submitted OTP:", otp);
-    console.log("Submitted OTP hash:", hashOTP(otp));
 
     if (Date.now() > user.otpExpiry) {
       return res

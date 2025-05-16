@@ -8,7 +8,7 @@ const seedRecipes = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
 
-    const totalToFetch = 100;
+    const totalToFetch = 50;
     const batchSize = 10;
 
     for (let offset = 0; offset < totalToFetch; offset += batchSize) {

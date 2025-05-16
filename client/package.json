@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "both": "concurrently \"vite\" \"cd ../server && npm run dev\" \"vite --host\""
   },
   "dependencies": {
     "aos": "^2.3.4",

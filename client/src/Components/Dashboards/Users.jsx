@@ -7,29 +7,30 @@ import axios from "axios";
 
 const userColumns = [
   { label: "Username", key: "username" },
-  { label: "Email", key: "email" },
+  { label: "Email", key: "email" },  
+
 ];
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
-const [editData, setEditData] = useState({});
-
-
+  const [editData, setEditData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/all-users", { withCredentials: true }) // Ensure cookies are sent
-      .then(response => {
+    axios
+      .get("http://localhost:5000/api/all-users", { withCredentials: true })
+      .then((response) => {
         setUsers(response.data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching users:", error);
-        if (error.response && error.response.status === 401) {
-         
+        if (error.response?.status === 401) {
           window.location.href = "/login";
         }
-      });
+      })
+      .finally(() => setLoading(false)); // Ensure loading is reset
   }, []);
 
   const handleView = (user) => {
@@ -48,47 +49,68 @@ const [editData, setEditData] = useState({});
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`http://localhost:5000/api/delete-user/${user.username}`, { withCredentials: true }); // Ensure cookies are sent
+          const response = await axios.delete(
+            `http://localhost:5000/api/delete-user/${user.username}`,
+            { withCredentials: true }
+          ); // Ensure cookies are sent
           if (response.status === 200) {
             Swal.fire("Deleted!", response.data.message, "success");
-            setUsers((prevUsers) => prevUsers.filter((u) => u.username !== user.username));
+            setUsers((prevUsers) =>
+              prevUsers.filter((u) => u.username !== user.username)
+            );
           } else {
-            Swal.fire("Error", response.data.message || "Failed to delete user.", "error");
+            Swal.fire(
+              "Error",
+              response.data.message || "Failed to delete user.",
+              "error"
+            );
           }
         } catch (error) {
           console.error("Delete error:", error);
-          Swal.fire("Error", error.response?.data?.message || "Failed to delete user.", "error");
+          Swal.fire(
+            "Error",
+            error.response?.data?.message || "Failed to delete user.",
+            "error"
+          );
         }
       }
     });
   };
 
   const handleEdit = (user) => {
-  setEditUser(user);
-  setEditData({ ...user });
-};
+    setEditUser(user);
+    setEditData({ ...user });
+  };
 
-const handleEditChange = (e) => {
-  setEditData({ ...editData, [e.target.name]: e.target.value });
-};
+  const handleEditChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
 
-const submitEdit = async () => {
-  try {
-    const res = await axios.put("http://localhost:5000/api/update-user", editData, {
-      withCredentials: true,
-    });
+  const submitEdit = async () => {
+    try {
+      const res = await axios.put(
+        "http://localhost:5000/api/update-user",
+        editData,
+        {
+          withCredentials: true,
+        }
+      );
 
-    Swal.fire("Success", "User updated successfully!", "success");
+      Swal.fire("Success", "User updated successfully!", "success");
 
-    setUsers((prev) =>
-      prev.map((u) => (u.email === editData.email ? res.data.user : u))
-    );
-    setEditUser(null);
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Error", err.response?.data?.message || "Failed to update user.", "error");
-  }
-};
+      setUsers((prev) =>
+        prev.map((u) => (u.email === editData.email ? res.data.user : u))
+      );
+      setEditUser(null);
+    } catch (err) {
+      console.error(err);
+      Swal.fire(
+        "Error",
+        err.response?.data?.message || "Failed to update user.",
+        "error"
+      );
+    }
+  };
 
   return (
     <>
@@ -98,76 +120,85 @@ const submitEdit = async () => {
         columns={userColumns}
         actions={[
           { label: "View", icon: <Icons.FaEye />, onClick: handleView },
-           { label: "Edit", icon: <Icons.FaEdit />, onClick: handleEdit },
+          { label: "Edit", icon: <Icons.FaEdit />, onClick: handleEdit },
           { label: "Delete", icon: <Icons.FaTrash />, onClick: handleDelete },
         ]}
+        loading={loading}
       />
 
       {selectedUser && (
         <div className="edit-modal">
           <div className="modal-content">
-            <h3 style={{ fontSize: '1.3rem', marginBottom: 15 }}>User Profile</h3>
-            <p className="profile-attributes"><strong>Username:</strong> {selectedUser.username}</p>
-            <p className="profile-attributes"><strong>Email:</strong> {selectedUser.email}</p>
-            <p className="profile-attributes"><strong>Phone:</strong> {selectedUser.phone}</p>
-            <p className="profile-attributes"><strong>Gender:</strong> {selectedUser.gender}</p>
+            <h3 style={{ fontSize: "1.3rem", marginBottom: 15 }}>
+              User Profile
+            </h3>
+            <p className="profile-attributes">
+              <strong>Username:</strong> {selectedUser.username}
+            </p>
+            <p className="profile-attributes">
+              <strong>Email:</strong> {selectedUser.email}
+            </p>
+            <p className="profile-attributes">
+              <strong>Phone:</strong> {selectedUser.phone}
+            </p>
+            <p className="profile-attributes">
+              <strong>Gender:</strong> {selectedUser.gender}
+            </p>
             <div className="modal-buttons">
-              <button style={{ marginLeft: 100, marginTop: 15 }} onClick={() => setSelectedUser(null)}>Close</button>
+              <button
+                style={{ marginLeft: 100, marginTop: 15 }}
+                onClick={() => setSelectedUser(null)}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {editUser && (
-  <div className="edit-modal">
-    <div className="modal-content">
-      <h3>Edit User</h3>
+        <div className="edit-modal">
+          <div className="modal-content">
+            <h3>Edit User</h3>
 
-      <label>Username:</label>
-      <input
-        type="text"
-        name="username"
-        value={editData.username}
-        onChange={handleEditChange}
-      />
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={editData.username}
+              onChange={handleEditChange}
+            />
 
-      <label>Email (read-only):</label>
-      <input
-        type="email"
-        name="email"
-        value={editData.email}
-        readOnly
-      />
+            <label>Email (read-only):</label>
+            <input type="email" name="email" value={editData.email} readOnly />
 
-      <label>Phone:</label>
-      <input
-        type="tel"
-        name="phone"
-        value={editData.phone}
-        onChange={handleEditChange}
-      />
+            <label>Phone:</label>
+            <input
+              type="tel"
+              name="phone"
+              value={editData.phone}
+              onChange={handleEditChange}
+            />
 
-      <label>Gender:</label>
-      <select
-        name="gender"
-        value={editData.gender}
-        onChange={handleEditChange}
-      >
-        <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
+            <label>Gender:</label>
+            <select
+              name="gender"
+              value={editData.gender}
+              onChange={handleEditChange}
+            >
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
 
-      <div className="modal-buttons">
-        <button onClick={submitEdit}>Save</button>
-        <button onClick={() => setEditUser(null)}>Cancel</button>
-      </div>
-    </div>
-  </div>
-)}
-
-
+            <div className="modal-buttons">
+              <button onClick={submitEdit}>Save</button>
+              <button onClick={() => setEditUser(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

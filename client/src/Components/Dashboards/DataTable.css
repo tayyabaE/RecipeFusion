@@ -110,6 +110,34 @@ td {
   font-size: 1.3rem;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Adjust column widths by nth-child */
+th:nth-child(1),
+td:nth-child(1) {
+  width: 200px;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 300px;
+}
+
+/* Adjust action column */
+th:last-child,
+td:last-child {
+  width: 250px;
+}
+
 
 @media screen and (max-width: 768px) {
   .user-table{

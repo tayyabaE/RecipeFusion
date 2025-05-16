@@ -50,7 +50,6 @@ const sendEmail = async (to, subject, otp) => {
       html,
     });
 
-    console.log(" Email sent successfully:", info.response);
   } catch (error) {
     console.error("Failed to send email:", error.message);
     throw error;

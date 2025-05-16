@@ -7,24 +7,28 @@ import "./LandingPage.css";
 import contactsvg from "../../assets/Images/contact.svg";
 import footersvg from "../../assets/Images/footer1.svg";
 import footersvg1 from "../../assets/Images/footer.svg";
-import axios from 'axios';
+import axios from "axios";
+import Loader from "../Loader";
 
 function LandingPage() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: false });
   }, []);
 
-  const API_URL = `https://api.spoonacular.com/recipes/random?number=15&apiKey=${import.meta.env.VITE_FOOD_API}`;
+  const API_URL = `https://api.spoonacular.com/recipes/random?number=15&apiKey=${
+    import.meta.env.VITE_FOOD_API
+  }`;
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         const response = await axios.get(API_URL);
 
-        setRecipes(response.data.recipes); 
+        setRecipes(response.data.recipes);
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
@@ -33,6 +37,18 @@ function LandingPage() {
     fetchRecipes();
   }, []);
 
+  useEffect(() => {
+    // Simulate a loading delay (1.5 seconds)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <div className="landingPage">
       <a id="top"></a>
@@ -105,24 +121,37 @@ function LandingPage() {
         <h2 className="section-title" data-aos="fade-up" data-aos-delay="100">
           Popular Recipes
         </h2>
-        <div className="recipes-grid" data-aos="fade-up" data-aos-delay="300">
-          {recipes.map((recipe) => (
-            <div key={recipe.id} className="recipe-card">
-              <img
-                src={recipe.image}
-                alt={recipe.title}
-                className="recipe-image"
-              />
-              <h3 className="recipe-title">{recipe.title}</h3>
-              <button
-                className="btn-explore"
-                onClick={() => setSelectedRecipe(recipe)}
-              >
-                View Recipe
-              </button>
-            </div>
-          ))}
-        </div>
+
+        {loading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Loader />
+          </div>
+        ) : (
+          <div className="recipes-grid" data-aos="fade-up" data-aos-delay="300">
+            {recipes.map((recipe) => (
+              <div key={recipe.id} className="recipe-card">
+                <img
+                  src={recipe.image}
+                  alt={recipe.title}
+                  className="recipe-image"
+                />
+                <h3 className="recipe-title">{recipe.title}</h3>
+                <button
+                  className="btn-explore"
+                  onClick={() => setSelectedRecipe(recipe)}
+                >
+                  View Recipe
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/*recipe-info mdal*/}
@@ -168,13 +197,20 @@ function LandingPage() {
 
       {/*contact us */}
 
-      <section className="contact-section" id="contact-section" data-aos="fade-up" >
+      <section
+        className="contact-section"
+        id="contact-section"
+        data-aos="fade-up"
+      >
         <h2 className="section-title" data-aos="fade-up" data-aos-delay="200">
           Contact Us
         </h2>
 
-        <div className="contact-container" data-aos="fade-up" data-aos-delay="200">
-          
+        <div
+          className="contact-container"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
           <div className="contact-svg" data-aos="zoom-in" data-aos-delay="300">
             <img src={contactsvg} />
           </div>
@@ -183,7 +219,12 @@ function LandingPage() {
             <form>
               <div className="form-group">
                 <input type="text" placeholder="Your Name" required />
-                <input type="email" placeholder="Your Email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"/>
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  required
+                  pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                />
               </div>
               <input type="text" placeholder="Subject" required />
               <textarea placeholder="Message" rows="5" required></textarea>
@@ -193,41 +234,64 @@ function LandingPage() {
             </form>
           </div>
         </div>
-      </section>  
+      </section>
 
       <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-content">
-          <div className="footer-logo">
-            <h2>Recipe Fusion</h2>
-            <p>Cooking made simple & delicious</p>
-           <div className="footer-image">
-            <img src={footersvg} style={{marginTop:'20px'}}/>
-           </div>
+        <div className="footer-container">
+          <div className="footer-content">
+            <div className="footer-logo">
+              <h2>Recipe Fusion</h2>
+              <p>Cooking made simple & delicious</p>
+              <div className="footer-image">
+                <img src={footersvg} style={{ marginTop: "20px" }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="quick-links">
+            <h3>Quick Links</h3>
+            <ul className="footer-links">
+              <li>
+                {" "}
+                <a href="#home">
+                  {" "}
+                  <Icons.FaHouse className="icons-colored" /> Home{" "}
+                </a>
+              </li>
+              <li>
+                {" "}
+                <a href="#why-us">
+                  <Icons.FaCircleInfo className="icons-colored" /> Why Choose Us
+                </a>
+              </li>
+              <li>
+                {" "}
+                <a href="#popularRecipes">
+                  <Icons.FaUtensils className="icons-colored" /> Recipes
+                </a>
+              </li>
+              <li>
+                {" "}
+                <a href="#contact-section">
+                  <Icons.FaPhone className="icons-colored" /> Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer-image">
+            <img src={footersvg1} />
           </div>
         </div>
 
-        <div className="quick-links">
-          <h3>Quick Links</h3>
-          <ul className="footer-links">
-            <li> <a href="#home"> <Icons.FaHouse className="icons-colored" /> Home </a></li>
-            <li> <a href="#why-us"><Icons.FaCircleInfo className="icons-colored" /> Why Choose Us</a></li>
-            <li> <a href="#popularRecipes"><Icons.FaUtensils className="icons-colored" /> Recipes</a></li>
-            <li> <a href="#contact-section"><Icons.FaPhone className="icons-colored" /> Contact</a></li>
-          </ul>
+        <div className="footer-bottom">
+          <p>&copy; 2025 Recipe Fusion. All Rights Reserved.</p>
         </div>
-
-        <div className="footer-image">
-          <img src={footersvg1}/>
-        </div>
-      </div>
-
-      <div className="footer-bottom">
-        <p>&copy; 2025 Recipe Fusion. All Rights Reserved.</p>
-      </div>
-    </footer>
-    <a href="#top" id="topButton"> <Icons.FaArrowUp className="icons"/> </a>
-
+      </footer>
+      <a href="#top" id="topButton">
+        {" "}
+        <Icons.FaArrowUp className="icons" />{" "}
+      </a>
     </div>
   );
 }

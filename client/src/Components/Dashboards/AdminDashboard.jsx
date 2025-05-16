@@ -4,7 +4,16 @@ import * as Icons from "react-icons/fa6";
 import Chart from "react-apexcharts";
 import Sidebar from "../Dashboards/Sidebar.jsx";
 import axios from "axios";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import Loader from "../Loader";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 function AdminDashboard() {
   const [usersCount, setUsersCount] = useState(0);
@@ -16,48 +25,59 @@ function AdminDashboard() {
     negative: 0,
   });
   const [searchStats, setSearchStats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  axios
-    .get("http://localhost:5000/api/all-users", { withCredentials: true })
-    .then((res) => setUsersCount(res.data.length))
-    .catch((err) => console.error("Error fetching users:", err));
+    const fetchAllData = async () => {
+      try {
+        const [
+          usersRes,
+          recipesRes,
+          reviewsRes,
+          reviewStatsRes,
+          searchStatsRes,
+        ] = await Promise.all([
+          axios.get("http://localhost:5000/api/all-users", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:5000/api/all-recipes", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:5000/api/all-reviews", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:5000/api/reviews-stats", {
+            withCredentials: true,
+          }),
+          axios.get("http://localhost:5000/api/all-searches", {
+            withCredentials: true,
+          }),
+        ]);
 
-  axios
-    .get("http://localhost:5000/api/all-recipes", { withCredentials: true })
-    .then((res) => setRecipesCount(res.data.length))
-    .catch((err) => console.error("Error fetching recipes:", err));
+        setUsersCount(usersRes.data.length);
+        setRecipesCount(recipesRes.data.length);
+        setReviewsCount(reviewsRes.data.length);
 
-  axios
-    .get("http://localhost:5000/api/all-reviews", { withCredentials: true })
-    .then((res) => setReviewsCount(res.data.length))
-    .catch((err) => console.error("Error fetching reviews:", err));
+        const stats = reviewStatsRes.data.reduce(
+          (acc, item) => {
+            acc[item._id] = item.count;
+            return acc;
+          },
+          { positive: 0, neutral: 0, negative: 0 }
+        );
+        setReviewStats(stats);
 
-  axios
-    .get("http://localhost:5000/api/reviews-stats", { withCredentials: true })
-    .then((res) => {
-      const stats = res.data.reduce(
-        (acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        },
-        { positive: 0, neutral: 0, negative: 0 }
-      );
-      setReviewStats(stats);
-    })
-    .catch((err) =>
-      console.error("Error fetching review sentiment stats:", err)
-    );
+        const groupedByDate = groupSearchesByDate(searchStatsRes.data);
+        setSearchStats(groupedByDate);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  axios
-    .get("http://localhost:5000/api/all-searches", { withCredentials: true })
-    .then((res) => {
-      const groupedByDate = groupSearchesByDate(res.data);
-      setSearchStats(groupedByDate);
-    })
-    .catch((err) => console.error("Error fetching search history:", err));
-}, []);
-
+    fetchAllData();
+  }, []);
 
   const groupSearchesByDate = (searches) => {
     const grouped = searches.reduce((acc, search) => {
@@ -76,37 +96,52 @@ function AdminDashboard() {
   };
 
   return (
-    <div style={{ minHeight: "100vh" }}>
+    <div style={{ display: "flex", minHeight: "100vh" }}>
       <Sidebar />
 
-      <div className="admin-dashboard" style={{ flexGrow: 1, padding: "20px" }}>
-        <div className="row jc-between">
-          <h3 className="greeting">Welcome</h3>
-          <h4>Admin</h4>
-        </div>
+      <div
+        className="admin-dashboard"
+        style={{
+          flexGrow: 1,
+          padding: "20px",
+          display: "flex",
+          justifyContent: loading ? "center" : "flex-start",
+          alignItems: loading ? "center" : "flex-start",
+        }}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          <div style={{ width: "100%" }}>
+            <div className="row jc-between">
+              <h3 className="greeting">Welcome</h3>
+              <h4>Admin</h4>
+            </div>
 
-        <div className="cards-container jc-evenly">
-          <DashboardCard
-            title="Total Users"
-            count={usersCount}
-            icon={<Icons.FaUser />}
-          />
-          <DashboardCard
-            title="Recipes"
-            count={recipesCount}
-            icon={<Icons.FaReceipt />}
-          />
-          <DashboardCard
-            title="Reviews"
-            count={reviewsCount}
-            icon={<Icons.FaStar />}
-          />
-        </div>
+            <div className="cards-container jc-evenly">
+              <DashboardCard
+                title="Total Users"
+                count={usersCount}
+                icon={<Icons.FaUser />}
+              />
+              <DashboardCard
+                title="Recipes"
+                count={recipesCount}
+                icon={<Icons.FaReceipt />}
+              />
+              <DashboardCard
+                title="Reviews"
+                count={reviewsCount}
+                icon={<Icons.FaStar />}
+              />
+            </div>
 
-        <div className="dashboard-content">
-          <BarChart reviewStats={reviewStats} />
-          <SearchHistoryChart searchStats={searchStats} />
-        </div>
+            <div className="dashboard-content">
+              <BarChart reviewStats={reviewStats} />
+              <SearchHistoryChart searchStats={searchStats} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -129,7 +164,7 @@ function BarChart({ reviewStats }) {
 
   const sentimentData = [positive, neutral, negative];
   const sentimentCategories = ["Positive", "Neutral", "Negative"];
-  const sentimentColors = ["#28a745", "#6c757d", "#dc3545"]; // Green, Gray, Red
+  const sentimentColors = ["#28a745", "#6c757d", "#dc3545"];
 
   return (
     <div className="barchart">
@@ -146,7 +181,7 @@ function BarChart({ reviewStats }) {
             plotOptions: {
               bar: {
                 columnWidth: "45%",
-                distributed: true, 
+                distributed: true,
               },
             },
             colors: sentimentColors,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router,Routes,Route } from "react-router-dom";
 import AdminDashboard from "./Components/Dashboards/AdminDashboard";
 import UserTable from "./Components/Dashboards/Users";
@@ -16,9 +16,16 @@ import Login from "./Components/Login/Login";
 import Signup from "./Components/Login/Signup";
 import ProtectedRoute from "./utils/ProtectedRoutes";
 import AdminProtectedRoute from "./utils/AdminProtectedRoute";
+import Loader from "./Components/Loader";
 
 function Layout() {
- 
+ const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  }, []);
   return (
     <div>
         <Routes>
@@ -38,6 +45,9 @@ function Layout() {
           <Route path="/userdashboard/searchpage" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />  
           <Route path="/userdashboard/userprofile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} /> 
 
+          <Route path="/loader" element={<Loader />} /> 
+          
+          
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
@@ -46,7 +56,8 @@ function Layout() {
 }
 
 function App() {
-  return (
+   
+  return  (
     <Router>
       <Layout />
     </Router>

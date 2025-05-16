@@ -30,7 +30,6 @@ function ReviewsPage() {
           setReviews([]);
         }
 
-        console.log("Fetched Reviews:", res.data);
       } catch (error) {
         console.error("Error fetching reviews:", error.message);
         Swal.fire("Error", "Failed to fetch reviews", "error");
@@ -77,6 +76,7 @@ function ReviewsPage() {
 
   const reviewActions = [
     { label: "Delete", icon: <Icons.FaTrash />, onClick: handleDelete },
+    
   ];
 
   return (
