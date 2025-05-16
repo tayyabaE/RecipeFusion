@@ -27,7 +27,6 @@ app.use(cors(corsOptions))
 // app.options('*', cors());
 
 // Serve static files (images)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json())
 
 // Middleware to parse form-data requests
