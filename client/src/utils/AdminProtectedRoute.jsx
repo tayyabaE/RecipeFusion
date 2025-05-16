@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const AdminProtectedRoute = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -9,7 +10,7 @@ const AdminProtectedRoute = ({ children }) => {
   const fetchUser = async () => {
     try {
       const resp = await axios.post(
-        "http://localhost:5000/api/fetchuser",
+        `${baseURL}/api/fetchuser`,
         {},
         { withCredentials: true } 
       );

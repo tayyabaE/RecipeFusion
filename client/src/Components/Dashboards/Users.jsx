@@ -4,6 +4,7 @@ import DataTable from "./DataTable";
 import * as Icons from "react-icons/fa";
 import "./DataTable.css";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const userColumns = [
   { label: "Username", key: "username" },
@@ -20,7 +21,7 @@ function UsersPage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/all-users", { withCredentials: true })
+      .get(`${baseURL}/api/all-users`, { withCredentials: true })
       .then((response) => {
         setUsers(response.data);
       })
@@ -50,7 +51,7 @@ function UsersPage() {
       if (result.isConfirmed) {
         try {
           const response = await axios.delete(
-            `http://localhost:5000/api/delete-user/${user.username}`,
+            `${baseURL}/api/delete-user/${user.username}`,
             { withCredentials: true }
           ); // Ensure cookies are sent
           if (response.status === 200) {
@@ -89,7 +90,7 @@ function UsersPage() {
   const submitEdit = async () => {
     try {
       const res = await axios.put(
-        "http://localhost:5000/api/update-user",
+        `${baseURL}/api/update-user`,
         editData,
         {
           withCredentials: true,

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loader from "../Loader";
+const baseURL =  import.meta.env.VITE_NODE_URL 
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/login",
+        `${baseURL}/api/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -162,7 +163,7 @@ const Login = () => {
                     setLoading(true);
                     try {
                       await axios.post(
-                        "http://localhost:5000/api/forgot-password",
+                        `${baseURL}/api/forgot-password`,
                         {
                           email: forgotEmail,
                         }
@@ -267,7 +268,7 @@ const Login = () => {
                       setLoading(true);
                       try {
                         await axios.post(
-                          "http://localhost:5000/api/verify-otp",
+                          `${baseURL}/api/verify-otp`,
                           {
                             email: forgotEmail,
                             otp: enteredOtp,
@@ -313,7 +314,7 @@ const Login = () => {
                     setLoading(true);
                     try {
                       await axios.post(
-                        "http://localhost:5000/api/reset-password",
+                        `${baseURL}/api/reset-password`,
                         {
                           email: forgotEmail,
                           newPassword,

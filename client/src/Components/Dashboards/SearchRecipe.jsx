@@ -40,7 +40,7 @@ const SearchRecipe = () => {
         setRecipes(response.data.results);
 
         // Save search history
-        await axios.post("http://localhost:5000/api/add-search", {
+        await axios.post(`${baseURL}api/add-search`, {
           userId,
           query,
           type: "text",

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const IngredientSearch = () => {
   const [ingredients, setIngredients] = useState("");
@@ -27,7 +28,7 @@ const IngredientSearch = () => {
 
      
       await axios.post(
-        "http://localhost:5000/api/add-search",
+        `${baseURL}/api/add-search`,
         {
           query: ingredients,
           type: "ingredients",

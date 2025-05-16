@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import DataTable from "./DataTable";
 import * as Icons from "react-icons/fa6";
 import "./DataTable.css";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 function RecipesPage() {
   const [recipes, setRecipes] = useState([]);
@@ -13,7 +14,7 @@ function RecipesPage() {
     const fetchRecipes = async () => {
       try {
         // Including credentials (cookies or authorization token) for the request
-        const response = await fetch("http://localhost:5000/api/all-recipes", {
+        const response = await fetch(`${baseURL}/api/all-recipes`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth-token")}`, // Send token from localStorage (if applicable)

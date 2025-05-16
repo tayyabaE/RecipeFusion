@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import "./DataTable.css";
 import Swal from "sweetalert2";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const RecipeDetails = () => {
   const { id } = useParams();
@@ -66,7 +67,7 @@ const RecipeDetails = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/saved-recipes",
+        `${baseURL}/api/saved-recipes`,
         newRecipe,
         {
           withCredentials: true,
@@ -109,7 +110,7 @@ const RecipeDetails = () => {
       };
 
       const res = await axios.post(
-        "http://localhost:5000/api/add-review",
+        `${baseURL}/api/add-review`,
         reviewData,
         { 
           withCredentials: true, 

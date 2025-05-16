@@ -5,6 +5,7 @@ import Chart from "react-apexcharts";
 import Sidebar from "../Dashboards/Sidebar.jsx";
 import axios from "axios";
 import Loader from "../Loader";
+const baseURL = import.meta.env.VITE_NODE_URL
 import {
   AreaChart,
   Area,
@@ -37,19 +38,19 @@ function AdminDashboard() {
           reviewStatsRes,
           searchStatsRes,
         ] = await Promise.all([
-          axios.get("http://localhost:5000/api/all-users", {
+          axios.get(`${baseURL}/api/all-users`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/all-recipes", {
+          axios.get(`${baseURL}/api/all-recipes`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/all-reviews", {
+          axios.get(`${baseURL}/api/all-reviews`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/reviews-stats", {
+          axios.get(`${baseURL}/api/reviews-stats`, {
             withCredentials: true,
           }),
-          axios.get("http://localhost:5000/api/all-searches", {
+          axios.get(`${baseURL}/api/all-searches`, {
             withCredentials: true,
           }),
         ]);

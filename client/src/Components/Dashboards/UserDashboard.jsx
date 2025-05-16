@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./UserDashboard.css";
 import Sidebar from "./UserSidebar";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const UserDashboard = () => {
   const [recommendations, setRecommendations] = useState([]);
@@ -29,7 +30,7 @@ const UserDashboard = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/fetchuser", 
+          `${baseURL}/api/fetchuser`, 
           {},
           { withCredentials: true } // Ensure cookies are sent
         );
@@ -55,7 +56,7 @@ const UserDashboard = () => {
 
     const fetchSearches = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user-searches`, {
+        const res = await axios.get(`${baseURL}/api/user-searches`, {
           params: { userId: user._id }, // Use user._id for API
           withCredentials: true, // Send cookie with request
         });
@@ -68,7 +69,7 @@ const UserDashboard = () => {
     const fetchSavedRecipes = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/saved-recipes/${user._id}`,
+          `${baseURL}/api/saved-recipes/${user._id}`,
           { withCredentials: true } // Send cookie with request
         );
         setSavedRecipes(res.data);

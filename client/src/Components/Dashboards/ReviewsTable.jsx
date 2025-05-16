@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import DataTable from "./DataTable";
 import * as Icons from "react-icons/fa6";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const reviewColumns = [
   { label: "Title", key: "title" },
@@ -20,7 +21,7 @@ function ReviewsPage() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/all-reviews");
+        const res = await axios.get(`${baseURL}/api/all-reviews`);
 
         if (Array.isArray(res.data)) {
           setReviews(res.data);
@@ -53,7 +54,7 @@ function ReviewsPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete("http://localhost:5000/api/reviews/" + review.userId._id + "/" + review.recipeId);
+          await axios.delete(`${baseURL}/api/reviews/` + review.userId._id + "/" + review.recipeId);
 
           setReviews((prev) =>
             prev.filter(

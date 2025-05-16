@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import "./Login.css";
 import signupImage from "../../assets/Images/signup.svg";
 import { FaUser, FaEnvelope, FaPhone, FaVenusMars, FaLock } from "react-icons/fa";
+const baseURL = import.meta.env.VITE_NODE_URL
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/register", formData, {
+      const response = await axios.post(`${baseURL}/api/register`, formData, {
         withCredentials: true,
       });
 
