@@ -13,12 +13,16 @@ const savedRecipe = require('./routes/savedRecipes');
 
 const app = express();
 
-app.use(cors({
-  origin: true,
-  methods: ["GET", "POST", "DELETE", "PUT"],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'auth-token', "Authorization"],
-}));
+const corsOrigin = process.env.REACT_URL
+
+const corsOptions = {
+    origin: corsOrigin,
+    methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"],
+    credentials: true
+}
+
+// Middlewares
+app.use(cors(corsOptions))
 
 
 app.use(express.json());
